@@ -78,7 +78,7 @@ const config = {
             items: [
               {
                 label: '内部跳转',
-                to: '/docs/intro',
+                to: '/blog/welcome',
               },
               {
                 label: '外部跳转',
