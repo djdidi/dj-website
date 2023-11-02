@@ -9,5 +9,5 @@ inputs:
     index: index.html
     error: index.html
   region: ap-guangzhou
-  bucketName: dj-website
+  bucketName: djwebsitebucket
   protocol: https
