@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Hello!',
+  title: 'dj blog',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.svg',
 
@@ -15,8 +15,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'djdidi', // Usually your GitHub org/user name.
+  projectName: 'dj-website', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -34,6 +34,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+          routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -53,15 +54,16 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-
+  // https://docusaurus.io/zh-CN/docs/api/themes/configuration
   themeConfig: {
     colorMode: {
+      defaultMode: 'light',
       disableSwitch: true,
     },
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/gouzi.png',
     navbar: {
-      title: '网站名字？',
+      title: 'dj个人博客',
       logo: {
         src: 'img/favicon.svg',
       },
@@ -70,11 +72,11 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: '一些Wiki',
+          label: '前端基础',
         },
         {
           to: '/blog/welcome',
-          label: '一些Blog',
+          label: 'blog',
           position: 'left',
         },
         {
