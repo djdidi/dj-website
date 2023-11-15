@@ -1,0 +1,10 @@
+{
+  "label": "CSS",
+  "position": 2,
+  "collapsible": false,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "CSS相关wiki"
+  }
+}

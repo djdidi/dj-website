@@ -6,7 +6,7 @@ sidebar_position: 2
 
 CSS基础知识回顾
 
-
+> 通过阅读mdn web docs快速回顾，概括记录要点
 
 ## 定义
 
@@ -148,17 +148,17 @@ html {
 
 ### BFC块级格式化上下文
 
-**是什么?**
+**定义**
 
 区块格式化上下文（Block Formatting Context，BFC）是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。
 
 一块独立渲染区域，内部元素的渲染不会影响边界以外的元素。
 
-**做什么？**
+**作用**
 
-格式化上下文影响布局，通常，我们会为定位和清除浮动创建新的 BFC，而不是更改布局，因为它将：
+格式化上下文影响布局，通常，我们会为定位和清除浮动创建新的 BFC，而不是更改布局
 
-- 浮动相关
+- 处理浮动相关
 - 阻止外边距重叠
 
 **相关文档**
@@ -168,22 +168,91 @@ html {
 > https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context
 
 
-
 ### 一些问题
 
 #### 外边距折叠
 
-区块的上下外边距有时会合并（折叠）为单个边距，其大小为两个边距中的最大值
+定义：区块的上下外边距有时会合并（折叠）为单个边距，其大小为两个边距中的最大值
 
-设计如此？
+为什么：设计如此？
 
-可以创建BFC解决
+处理：可以创建BFC解决
 
 > MDN-掌握外边距折叠
 >
 > https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_box_model/Mastering_margin_collapsing
 
 
+## CSS布局
+
+### 定义
+
+CSS 页面布局技术允许我们拾取网页中的元素，并且控制它们相对正常布局流、周边元素、父容器或者主视口/窗口的位置。
+
+> 简单概述不同布局，常用的单独专栏记录
+
+### 正常布局流
+
+浏览器正常的布局模式，根据html元素默认盒子类型（block/inline-block）排列。
+
+一些CSS属性可以覆盖默认布局行为：
+- display 块的内外部显示类型
+- float 浮动（实际没用过）
+- position 定位
+- column-*：多列布局（纯粹没用过）
+
+### 弹性盒子
+
+设置 `display: flex;`
+
+flex一把梭！！！
+
+### 网格布局
+
+设置 `display: grid;`
+
+设计横向或纵向的布局，使用会方便很多
+
+### 浮动
+
+`float相关`
+
+一些存量项目有，需要时再看，或者直接flex
+
+新代码写 review 会被喷吧
+
+### 定位
+
+设置 `position` 属性
+
+有五种主要的定位类型
+
+- 静态定位（Static）默认位置
+- 相对定位（Relative）保留之前的占位块，相对自身移动位置。
+- 绝对定位（Absolute）脱离文档流。相对于最近被定位的父元素固定。
+- 固定定位（Fixed）脱离文档流。与绝对定位类似，相对浏览器视口固定，而不是相对另外一个元素。
+- 粘性定位（Sticky）设置它的相对视口位置达到某一个预设值时，`static` 和 `fixed` 之间切换。
+
+### 表格布局/多列布局
+
+- display: table;
+- column-* 
+
+没用过，业务需要再看吧。
 
 
+## CSS 对象模型 (CSSOM)
+
+CSS 对象模型（CSS Object Model） 是树形形式的所有 CSS 选择器和每个选择器的相关属性的映射，具有树的根节点，同级，后代，子级和其他关系。
+
+CSSOM 与 文档对象模型 (DOM) 非常相似。两者都是关键渲染路径的一部分，也是正确渲染一个网站必须采取的一系列步骤。
+
+CSSOM 与 DOM 一起构建渲染树，浏览器依次使用渲染树来布局和绘制网页。
+
+### CSSOM API
+
+CSS 对象模型是一组允许用 JavaScript 操纵 CSS 的 API。它很像 DOM，但针对的是 CSS 而不是 HTML。它允许用户动态地读取和修改 CSS 样式。
+
+> MDN-CSS Object Modal
+> https://developer.mozilla.org/zh-CN/docs/Web/API/CSS_Object_Model
 
