@@ -1,9 +1,9 @@
 ---
-position: 1
+sidebar_position: 1
 slug: /css/css-layout/history
 ---
 
-# web布局发展史
+# web布局演变
 
 ## web布局演变过程
 

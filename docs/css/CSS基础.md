@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 0
 slug: css-base
 ---
 
@@ -212,7 +212,7 @@ flex一把梭！！！
 
 设置 `display: grid;`
 
-设计横向或纵向的布局，使用会方便很多
+涉及二维的布局，使用会方便很多
 
 ### 浮动
 
