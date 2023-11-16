@@ -46,7 +46,7 @@ HTML 由一系列的元素组成，这些元素可以用来包围或标记不同
 
 
 
-## 其他
+## 相关链接
 
 > MDN文档术语表：https://developer.mozilla.org/zh-CN/docs/Glossary
 >

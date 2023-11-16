@@ -1,0 +1,14 @@
+{
+  "label": "CSS布局",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "title": "CSS布局",
+    "description": "CSS布局相关整理",
+    "slug": "/css/css-layout",
+    "keywords": ["guides"],
+    "image": "/img/gouzi.png"
+  }
+}
