@@ -20,12 +20,6 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 ![](/img/flex-definition.png)
 
-**flex容器和flex项目属性**
-
-![](/img/flex-properties1.png)
-
-![](/img/flex-properties2.png)
-
 ### 控制flex项目的方向
 
 通过 `flex-direction` 设置
@@ -60,7 +54,7 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 - gap 运用在 flex 容器上，但它无法给 flex 项目设置不同的外间距。
 - margin 运用在 flex 项目上，可以给 flex 项目设置不同的外间距。
 
-![](/img/flex-gap-margin.png)
+<img src="/img/flex-gap-margin.png" width="500" />
 
 根据实际的场景选择，只用 `margin` 也可以实现与 `gap` 一样的效果
 
@@ -74,11 +68,11 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 |                      | 主轴(justify-*)   | 侧轴(align-*)   |
 |----------------------|-----------------|---------------|
-| 对齐 Flex 项目( *-items) | justify-items   | align-items   |
-| Flex 项目自对齐( *-self)  | justify-self    | align-self    |
+| 对齐 Flex 项目( *-items) | ~justify-items~ | align-items   |
+| Flex 项目自对齐( *-self)  | ~justify-self~  | align-self    |
 | 空间分配( *-content)     | justify-content | align-content |
 
-![](/img/flex-justify-align.png)
+<img src="/img/flex-justify-align.png" width="600" />
 
 ### 按主轴分配空间
 
@@ -87,7 +81,7 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 设置 `justify-content` 属性，作用于 flex 容器主轴上，可以控制 flex 项目在主轴方向的对齐方式，以及主轴方向剩余空间的分配。
 
 - 每一行都是一个主轴
-- 属性及表现直接看MDN，Examples [MDN justify-content](https://developer.mozilla.org/en-US/docs/web/css/justify-content)
+- 属性及表现直接看MDN-Examples [MDN justify-content](https://developer.mozilla.org/en-US/docs/web/css/justify-content)
 
 
 ### 沿侧轴分配空间
@@ -98,11 +92,11 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 设置 `align-content` 属性，可以控制 flex 行（即 flex-wrap 属性为非 nowrap 时），在 flex 容器侧轴方向的对齐方式，以及侧轴方向剩余空间的分配。
 
-- 属性与 justify-content 大致相同，多出一个 `stretch` 默认值 
+- 属性与 justify-content 大致相同，多出一个 `stretch` 默认值
 - 属性及表现直接看MDN-Examples [MDN align-content](https://developer.mozilla.org/en-US/docs/web/css/align-content)
 
 > `place-content`：justify-content 与 align-content 的合并写法（没用过）
-> 
+>
 > 一个水平垂直居中：*flex-warp: wrap; place-content: center;*
 
 
@@ -117,10 +111,11 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 > *align-items 与 align-content 如何区分理解？*
 > - align-content 属性需要在设置 flex-wrap 换行的情况下才能正常工作，是 flex 容器**整体侧轴**（行与行）的分配。
 > - align-items 属性则只用于控制 flex 项目在 flex **行内侧轴**方向的对齐方式
-> 
+>
 > 可以把侧轴分为 flex 盒子维度，flex 项目（行）维度来理解；每一行有自己的侧轴。
-> 
-> ![](/img/flex-axis.png)
+>
+> <img src="/img/flex-axis.png" />
+
 
 - 属性及表现直接看MDN-Examples [MDN align-content](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items)
 
@@ -129,3 +124,13 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 `align-self` 用于 flex 项目上，控制单个 flex 项目在（行内）侧轴上对齐方式。
 
 - 属性及表现直接看MDN-Examples [MDN align-content](https://developer.mozilla.org/en-US/docs/Web/CSS/align-self)
+
+
+### flex 子项上的 margin
+
+在同一行内，通过子项的 `margin` 属性实现分组效果
+
+<img src="/img/flex-margin.png" width="500" />
+
+## flex-* 属性的运用
+
