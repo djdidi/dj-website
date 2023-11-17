@@ -257,3 +257,7 @@ CSS 对象模型是一组允许用 JavaScript 操纵 CSS 的 API。它很像 DOM
 > MDN-CSS Object Modal
 > https://developer.mozilla.org/zh-CN/docs/Web/API/CSS_Object_Model
 
+## 其他 CSS 基本概念参考文档
+
+- CSS 的简写属性：https://developer.mozilla.org/zh-CN/docs/Web/CSS/Shorthand_properties
+- CSS 属性值定义语法：https://developer.mozilla.org/zh-CN/docs/Web/CSS/Value_definition_syntax

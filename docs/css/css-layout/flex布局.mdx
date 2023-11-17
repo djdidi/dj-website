@@ -60,7 +60,7 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 - flex容器给个负值的margin
 - 伪类选择指定flex子项，给不同的margin
-- （💩山代码出现了）
+- （需要兼容时）
 
 ## flex布局对齐方式
 
@@ -68,8 +68,8 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 |                      | 主轴(justify-*)   | 侧轴(align-*)   |
 |----------------------|-----------------|---------------|
-| 对齐 Flex 项目( *-items) | ~justify-items~ | align-items   |
-| Flex 项目自对齐( *-self)  | ~justify-self~  | align-self    |
+| 对齐 flex 项目( *-items) | ~justify-items~ | align-items   |
+| flex 项目自对齐( *-self)  | ~justify-self~  | align-self    |
 | 空间分配( *-content)     | justify-content | align-content |
 
 <img src="/img/flex-justify-align.png" width="600" />
@@ -86,7 +86,7 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 ### 沿侧轴分配空间
 
-> 沿侧轴分配空间，又可以看作是 Flexbox 布局中多行的对齐方式 ！
+> 沿侧轴分配空间，又可以看作是 flexbox 布局中多行的对齐方式 ！
 
 **align-content**
 
@@ -102,7 +102,7 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 
 ### 沿侧轴对齐 flex 项目
 
-> 沿侧轴对齐 Flex 项目，指的是 Flex 容器中单行以及单个 flex 项目的对齐方式 ！
+> 沿侧轴对齐 flex 项目，指的是 flex 容器中单行以及单个 flex 项目的对齐方式 ！
 
 **align-items**
 
@@ -133,4 +133,73 @@ flexible Box 模型，通常被称为 flexbox，是一种一维的布局模型�
 <img src="/img/flex-margin.png" width="500" />
 
 ## flex-* 属性的运用
+
+### flex
+
+flex 是一个只能**用于 flex 项目**的属性，它可以让 flex 项目根据 flex 容器的可用空间**对自身做伸缩计算。**
+
+是以下 CSS 属性的简写
+
+- flex-grow
+- flex-shrink
+- flex-basis
+
+> 通常使用 flex 速记来定义，以确保所有的值都被设置。---MDN
+
+### flex-grow
+
+flex-grow 属性规定了 flex 子项在 flex 容器中**分配剩余空间的相对比例**。 主尺寸是项的宽度或高度，这取决于 flex-direction 值。
+
+一般在有剩余空间的场景使用。
+
+### flex-shrink
+
+flex-shrink 属性指定了 flex 元素的收缩规则。**flex 元素仅在默认宽度之和大于容器的时候才会发生收缩**，其收缩的大小是依据 flex-shrink 的值。
+
+### flex-basis
+
+flex-basis 属性指定了 flex 元素在主轴方向上的初始大小。
+
+
+## flex 构建布局示例
+
+### 等高布局
+
+一些卡片的排列
+
+`align-items: stretch;` 默认就是等高拉伸的
+
+### 等分列布局
+
+tabbar 排布
+
+`flex: 1` 即可
+
+### 圣杯布局
+
+左右定宽，中间自适应。围绕 `flex: 1` 写
+
+<img src='/img/css-holyGrailLayout.png' width="700" />
+
+### 12列网格布局
+
+类似bootstrap网格，主要通过 `flex-basis` 来划分百分比
+
+<img src='/img/flex-bootstrap.png' width='700' />
+
+
+### 不同对齐方式的导航栏
+
+简单常用，不多说
+
+<img src='/img/flex-navbar.png' width='800' />
+
+
+## 总结与回顾
+
+> 偷个掘金小册的图
+
+![](https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/flex-summarize.png)
+
+
 
