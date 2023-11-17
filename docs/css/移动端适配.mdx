@@ -1,0 +1,79 @@
+---
+sidebar_position: 3
+slug: /css/mobile-adaptive
+---
+
+# 移动端适配
+
+## rem / vw 适配方案
+
+### rem 适配方案
+
+同样的设计稿，需要在不同尺寸的屏幕下表现一致，那么我们需要有一个“参照物”来书写单位。
+
+早年视窗单位还没有得到主流浏览器的支持，`rem` 单位作为适配方案就是最好选择。
+
+- 任何元素的属性值取 rem 作为单位的值，它始终都是相对于 HTML 的根元素 `<html>` 的 font-size 来计算。
+- 我们只需要在不同的终端设备中调整根元素 html 的 font-size 的值，就可以实现不同终端设备的适配。
+
+**1.动态调整html font-size**
+
+通过 `lib-flexible` 库或媒体查询等动态设置。
+
+**2.px 转换为 rem**
+
+通过 postcss `px2rem` 插件可以实现。
+
+> 以上都按照相同定义的比例变换即可，例如 `750px => font-size: 75px`
+
+### vw 适配方案
+
+直到 2018 年，CSS 的视窗单位得到主流浏览器的支持，可以将 rem 的适配方案开始切换到 vw 的适配方案。
+
+- 只需要用 `px2vw` 来转换即可，根据设计稿配置下转换比例，例如 `750px => 100vw`
+- 这对于开发者来说是无感的。
+
+**viewport 设置**
+
+> MDN-viewport meta 标记：https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag
+>
+> `<meta name="viewport" content="width=device-width, initial-scale=1" />`
+
+### rem 与 vw 适配的缺陷
+
+至今两者仍然是主流的布局技术，但是其本质一致，都是以某“参照物”，以缩放参照单位为基准。都有自己的缺陷。
+
+- 在较宽屏幕中，会有显示“变形”的感觉，可以设置 `max-width` 来定义最大宽，但也并不是一个好的体验。
+  <img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/rem-max-width.png' width={300} />
+
+- 在较宽屏幕中，一些纵向的组件也会有缺陷
+  <img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/rem-bug.png' width={300} />
+
+- ......
+
+## 构建响应式UI
+
+> 随着 CSS 更多优秀的特性越来越多，让我们构建响应式的 UI 越来越容易，而且并不像使用 rem 和 vw 那样对 UI 直接做缩放处理。
+>
+> 许多新特性也会让 Web 开发者变得更容易，UI更完善，用户体验更好！
+
+对于构建一个响应式的UI/布局，主要有以下几点
+
+- 响应元素的大小
+- 响应元素的位置
+- 响应元素的排版
+
+***探讨如何构建一个响应式 UI，让整个 UI 或 Web 页面能更好地适配不同的终端设备？***
+
+### CSS 的数学计算
+
+- calc：数学计算
+- max/min：参数列表中取最值
+- clamp(MIN, VAL, MAX)：把一个值限制在一个上限和下限之间（返回值：1.超出范围取边界；2.范围内取VAL）
+
+**通过CSS现代属性+媒体查询+现代布局，可以考虑更加复杂的场景，更细粒度的实现，更好的用户体验...**
+
+> 还是需要自己从实际应用中再去体会，小册中也有一些案例。
+
+
+
