@@ -1,0 +1,113 @@
+---
+sidebar_position: 3
+slug: /css/css-layout/grid
+---
+
+# grid 布局
+
+> 用来给 Web 页面布局的CSS属性，其实一直以来都不算很好，所有这些方法本质上都是一种 CSS Hack 手段。
+>
+> 就 Web 布局而言， CSS Grid 是一个专门为解决布局问题而创建的 CSS 模块。
+
+## gird 布局基本概念
+
+grid 布局将网页划分成一个个网格，可以任意组合不同的网格，做出各种各样的布局。
+
+> 阮一峰写的简单通俗易懂 https://www.ruanyifeng.com/blog/2019/03/grid-layout-tutorial.html
+
+### 一些术语
+
+- 容器和项目：网格布局的区域称为 grid 容器，一级子项称为 grid 项目
+- 行和列：row / column
+- 单元格：m 行 n 列，产生 m * n 个单元格
+- 网格线：n + 1 根网格线划分单元格
+- ......
+
+### 容器属性
+
+**定义网格容器**
+
+display: grid; 定义网格容器
+
+**`grid-template-rows` 和 `grid-template-columns` 划分行列**
+
+- repeat() 简写
+  ```css
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 33.33%);
+    grid-template-rows: repeat(3, 33.33%);
+  }
+  ```
+- auto-fill 关键字：自动填充，直到容器不能放置更多的列。 `repeat(auto-fill, 100px);`
+- fr 关键字：`fraction 片段`；按比例分配行列
+- 网格线的名称，使用`[]` 指定网格线名称，方便之后引用
+  ```css
+  .container {
+    display: grid;
+    grid-template-columns: [c1] 100px [c2] 100px [c3] auto [c4];
+    grid-template-rows: [r1] 100px [r2] 100px [r3] auto [r4];
+  }
+  ```
+
+**`grid-row-gap` 和 `grid-column-gap` 设置行列间距**
+
+- `grid-gap` 简写
+
+**`grid-template-areas` 定义区域**
+
+```css
+.container {
+  grid-template-areas: "header header header"
+                       "main main sidebar"
+                       "footer footer footer";
+}
+```
+
+**`grid-auto-flow` 定义放置顺序**
+
+**gird布局位置相关设置**
+- justify-*
+- align-*
+- place-*：以上简写
+
+### 项目属性
+
+**子项的位置指定**
+
+指定 grid 子项目的四个边框，分别定位在哪根网格线。
+
+- grid-[row/column]-[start/end]
+
+> grid-column-start属性：左边框所在的垂直网格线
+>
+> grid-column-end属性：右边框所在的垂直网格线
+>
+> grid-row-start属性：上边框所在的水平网格线
+>
+> grid-row-end属性：下边框所在的水平网格线
+
+```css
+/* 简写 */
+.item {
+  grid-column: <start-line> / <end-line>;
+  grid-row: <start-line> / <end-line>;
+}
+```
+
+也可以通过设置 `grid-area` 指定元素放在哪个区域
+
+- 具体区域名称 `grid-area: e;`
+- 可以合并以上四个属性来声明区域：`grid-area: <row-start> / <column-start> / <row-end> / <column-end>;`
+
+**子项对齐相关**
+
+- justify/align/place-self
+
+
+###
+
+## TODO
+
+
+
