@@ -84,7 +84,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_selectors
 
 
 
-### **四个部分**
+### 四个部分
 
 CSS 中组成一个块级盒子需要：
 
@@ -93,7 +93,7 @@ CSS 中组成一个块级盒子需要：
 - **Border box**: 边框盒包裹内容和内边距。大小通过 `border` 相关属性设置。
 - **Margin box**: 这是最外面的区域，是盒子和其他元素之间的空白区域。大小通过 `margin` 相关属性设置。
 
-### **两个模型**
+### 两个模型
 
 通过 `box-sizing` 属性修改
 
@@ -115,25 +115,7 @@ html {
 
 ### 块级盒子和内联盒子
 
-一个被定义成块级的（block）盒子会表现出以下行为：
-
-- 盒子会在内联的方向上扩展并占据父容器在该方向上的所有可用空间，在绝大数情况下意味着盒子会和父容器一样宽
-- 每个盒子都会换行
-- `width` 和 `height` 属性可以发挥作用
-- 内边距（padding）, 外边距（margin）和 边框（border）会将其他元素从当前盒子周围“推开”
-
-除非特殊指定，诸如标题 (`<h1>`等) 和段落 (`<p>`) 默认情况下都是块级的盒子。
-
-如果一个盒子对外显示为 `inline`，那么他的行为如下：
-
-- 盒子不会产生换行。
-- `width` 和 `height` 属性将不起作用。
-- 垂直方向的内边距、外边距以及边框会被应用但是不会把其他处于 `inline` 状态的盒子推开。
-- 水平方向的内边距、外边距以及边框会被应用且会把其他处于 `inline` 状态的盒子推开。
-
-用做链接的 `<a>` 元素、 `<span>`、 `<em>` 以及 `<strong>` 都是默认处于 `inline` 状态的。
-
-
+在空间占据、宽高属性、换行、边距等有自己的表现行为，元素标签有自己默认的盒子类型。
 
 ### 内部和外部显示类型
 
@@ -146,6 +128,23 @@ html {
 > 关于CSS布局，后续单独整理
 
 
+### 格式化上下文
+
+**定义**
+
+> "Everything on a page is part of a formatting context(FC), or an area which has been defined to layout content in a particular way." 
+> 
+> （页面上的所有内容都是格式化上下文(FC)的一部分，或者是一个以特定方式显示的区域。）
+> 
+> "Each formatting context has specific rules about how layout behaves when in that context." 
+> 
+> （每个FC在其上下文中都有特定的布局规则。）
+> 
+> ---MDN文档定义
+
+> IFC BFC GFC FFC...
+> 
+> [mdn-格式化上下文简介](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_flow_layout/Introduction_to_formatting_contexts)
 
 ### BFC块级格式化上下文
 
@@ -153,21 +152,14 @@ html {
 
 区块格式化上下文（Block Formatting Context，BFC）是 Web 页面的可视 CSS 渲染的一部分，是块级盒子的布局过程发生的区域，也是浮动元素与其他元素交互的区域。
 
-一块独立渲染区域，内部元素的渲染不会影响边界以外的元素。
-
-**作用**
+**常用**
 
 格式化上下文影响布局，通常，我们会为定位和清除浮动创建新的 BFC，而不是更改布局
 
 - 处理浮动相关
 - 阻止外边距重叠
 
-**相关文档**
-
-> mdn-区块格式化上下文（Block Formatting Context，BFC）
->
-> https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context
-
+> [mdn-区块格式化上下文](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context)
 
 ### 一些问题
 
@@ -256,6 +248,46 @@ CSS 对象模型是一组允许用 JavaScript 操纵 CSS 的 API。它很像 DOM
 
 > MDN-CSS Object Modal
 > https://developer.mozilla.org/zh-CN/docs/Web/API/CSS_Object_Model
+
+## CSS 过渡与变换
+
+### 过渡
+
+CSS 过渡提供了一种在更改 CSS 属性时控制动画速度的方法。其可以让属性变化成为一个持续一段时间的，而不是立即生效的过程。
+
+通过 `transition-*` 属性控制。
+
+### 变换
+
+通过改变坐标空间，CSS 变换可以在**不影响正常文档流**的情况下改变作用内容的位置。
+
+通过 `transform` 相关属性控制。
+
+**空间维度**
+
+- 2D
+- 3D
+
+**变换方式**
+
+- 位移 translate
+- 旋转 rotate
+- 缩放 scale
+- 变形 skew
+- ...
+
+
+## CSS 动画
+
+CSS animations 使得可以将从一个 CSS 样式配置转换到另一个 CSS 样式配置。
+
+- **通过 `animation*` 相关属性实现**
+
+- **@keyframes 定义动画序列**
+
+> 离实际应用还有距离，玩法很深，还需沉淀
+> 
+> https://developer.mozilla.org/zh-CN/docs/Web/CSS/animation
 
 ## 其他 CSS 基本概念参考文档
 
