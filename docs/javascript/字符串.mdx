@@ -1,0 +1,95 @@
+---
+sidebar_position: 2
+---
+
+## 基本结构
+
+字符串基本上表示为 UTF-16 码元的序列。
+
+UTF-16：一种字符编码方案，把Unicode字符集的抽象码位映射为16位长的整数（即码元）的序列，用于数据存储或传递。
+
+Unicode 字符的码位，需要1个或者2个16位长的码元来表示，因此这是一个变长表示。
+
+那么 **JavaScript 字符串中可能占据 1 个码元，也可能占据 2 个。**
+
+### 获取长度的影响
+
+String 类型的 length 数据属性表示字符串的 UTF-16 **码元长度**。
+
+**emoji 的修饰序列**
+
+在一个基础的 Emoji 编码后面，添加修饰符的编码，显示不同的 emoji 外观。可能超出2个码元。
+
+**同样会影响截取字符。**
+
+```javascript
+'🧑🏾'.substring(0, 2); // "🧑"
+
+"𠯿a"[2]; // a
+```
+
+## 常用操作
+
+### charCode 与 codePoint
+
+- charCode 码元。UTF-16，范围 0-0xFFFF
+- codePoint 码位。 完整的 Unicode 码位值，范围 0-0x10FFFF
+
+**相关 API**
+
+- `String.prototype.charCodeAt()` & `String.fromCharCode()`
+- `String.prototype.codePointAt()` & `String.fromCodePoint()`
+
+**`charCodeAt()` 与 `codePointAt()` 主要区别：**
+
+- 对于可以用单个UTF-16代码单元表示的代码点，UTF-16代码单元与Unicode代码点匹配。
+- 主要在处理字符有多个码元时，会有不同。
+- 如果Unicode代码点不能用单个UTF-16代码单元表示(大于0xFFFF)，那么 `charCodeAt()` 返回该代码点的<u>代理对</u>的第一部分。
+
+> 代理对(surrogate pair)：超出 0xFFFF 时的一些存储规则。具体先不关心。
+
+<img src={'https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/js-codepoint-charcode.png'} width={900} />
+
+### 搜索
+
+- startsWith / endsWith
+- indexOf / lastIndexOf
+- includes
+
+### 模式匹配
+
+根据字符串或者正则表达式匹配源字符串
+
+- match / matchAll
+- search
+- replace / replaceAll
+
+### 拼接拓展
+
+- concat
+- padStart / padEnd
+- repeat
+
+### 截取
+
+- substring(indexStart, indexEnd)
+- slice(indexStart, indexEnd) 作用与 substring 相同，参数支持负数，某些情况代码可以简洁些。
+- ~sub/substr 未来从web标准移除，不关心~
+
+### 删空白
+
+- trim / trimStart / trimEnd
+
+### 大小写转换
+
+- toLowerCase / toUpperCase
+
+### 与数组转换
+
+- split
+- `[...str]`
+
+
+
+
+
