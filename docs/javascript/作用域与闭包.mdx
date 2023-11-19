@@ -1,0 +1,144 @@
+---
+sidebar_position: 1
+---
+
+# 作用域与闭包
+
+## 作用域
+
+### 定义
+
+> MDN Scope 定义：https://developer.mozilla.org/zh-CN/docs/Glossary/Scope
+
+作用域是当前的执行上下文，是变量被承载的容器。
+
+### 环境记录 （Environment Record）
+
+在 ECMAScript 规范中，定义了一个叫做环境记录（Environment Record）的抽象概念。
+
+> Environment Record 原文：https://tc39.es/ecma262/#sec-lexical-environments
+
+**目前官方规范中定义的这几种作用域的关系是：**
+
+<img src="/img/js-environment-record.png" width={800} />
+
+- 每一个 Environment Record 有一个 `OuterEnv` 属性，指向另一个 Environment Record 实例。
+- 作用域是有上下层级关系的，所有作用域组成一个树形结构。
+- 搜索变量时可以看作“沿作用域链”。
+
+### this
+
+在每个 Environment Record 中，存在与查找 this 相关的方法，主要如下，不同的子类实现不同。
+
+- `env.HasBindingThis()`
+- `env.GetThisBinding()`
+
+当我们代码在执行过程中遇到 this 时，沿作用域链向上查找this，接下来看每个子类对于 this 相关方法的实现。
+
+**Declarative Environment Records**
+
+- `HasBindingThis` 始终是 false，继续向上查找
+- `GetThisBinding` 没有实现
+
+**Object Environment Records**
+
+- `HasBindingThis` 始终是 false，继续向上查找
+- `GetThisBinding` 没有实现
+
+**Function Environment Records**
+
+- `HasBindingThis`：箭头函数 false，其他 true
+- `GetThisBinding`：调用者。*(This is the this value used for this invocation of the function.)*
+
+> 对于箭头函数 this 最根本的解释了，设计如此。
+>
+> 同样，关于 this 绑定，箭头函数的 `BindingThisValue()` 也有定义 ，与 call/bind/apply` 相关。
+
+**Global Environment Records**
+
+- `HasBindingThis` 始终是 true
+- `GetThisBinding` 值为 GlobalThisValue，具体js运行环境实现不同
+
+**Module Environment Records**
+
+- `HasBindingThis` 始终是 true
+- `GetThisBinding` 值为 undefined
+
+### 变量提升与暂时性死区
+
+- var 提升；函数定义解析提升。
+
+- 暂时性死区：Temporal Dead Zone。
+
+```javascript
+// demo-暂时性死区
+let x = 1;
+
+function func() {
+  console.log(x); // ReferenceError: Cannot access 'x' before initialization
+
+  let x = 2;
+}
+
+func();
+```
+
+
+## 闭包
+
+闭包（closure）是一个函数以及其捆绑的周边环境状态（lexical environment，词法环境）的引用的组合。
+
+闭包让开发者可以从内部函数访问外部函数的作用域。在 JavaScript 中，闭包会随着函数的创建而被同时创建。
+
+就是个能让函数正常跑，保留作用域。
+
+### 私有变量
+
+```javascript
+const logCount = (function () {
+  let count = 0;
+
+  return function () {
+    console.log(count++);
+  }
+})();
+
+logCount(); // 0
+logCount(); // 1
+logCount(); // 2
+```
+
+### React Hooks 中的闭包
+
+从一个定时器 hook 开始看。
+
+凭直觉写一个定时器，log 结果始终为 1 1 1...
+
+```javascript
+const [count, setCount] = useState(1);
+
+useEffect(() => {
+  const timer = window.setInterval(() => {
+    setCount(count + 1);
+  }, 2000);
+
+  return () => clearInterval(timer);
+}, []);
+
+// 1 1 1 1 1
+```
+
+**根本原因：**
+
+- 在 fiber 节点的 memorizedState 属性存放一个链表，链表节点和 hook 一一对应，每个 hook 都在各自对应的节点上存取数据。
+- useEffect 此时 deps 的参数为 `[]`，重新执行时会对比新旧两次的 deps，如果变了才会重新执行传入的函数。
+- 在定时器回调函数创建时，闭包中变量 `count` 始终为 `1`，无论 state 如何更新。
+
+> 具体结合 react hooks 原理和 react 声明周期 一起来看。
+
+**解决方式**
+
+- count 加入到 deps 中，重置定时器，会影响定时器准确性
+- useRef 存下 countRef
+- useRef 存下 latestCallbackRef，useLayoutEffect 重置 latestCallbackRef
+- 参考下 ahooks useTimeout
