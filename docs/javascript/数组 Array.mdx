@@ -1,3 +1,90 @@
 ---
 sidebar_position: 5
 ---
+
+# 数组 Array
+
+JavaScript 的数组比较灵活，可以存储不同类型的数组，数组的容量也可以灵活地扩展和收缩。
+
+## 构造
+
+```javascript
+// 1.字面量
+const fruits = ['apple', 'banana'];
+
+// 2.构造函数
+const arr1 = Array(2); // [empty, empty]
+
+// 3.Array.of 同字面量 []
+const arr2 = Array.of(2) // [2]
+
+// 4.Array.from 类数组对象（可迭代、length+索引元素对象）转换为数组
+/* 数组去重 */
+const arr3 = Array.from(new Set([1, 2, 2, 3]));
+/* 生成 A-Z */
+const arr4 = Array.from(new Array(26), (val, index) => String.fromCodePoint(65 + index));
+```
+
+## 遍历
+
+- for / while
+- Array.prototype 原型上的遍历函数，如 forEach，不可中断
+- for...in 从对象角度遍历数组，可能遍历出属性描述符 `enumerable: true` 的值
+- for...of 从迭代角度遍历，详细看 *迭代器* 部分
+
+## 原型常用方法
+
+### 查 index 相关
+
+- indexOf / lastIndexOf
+- findIndex / findLastIndex
+
+### 查找元素本身
+
+- find / findLast
+
+### boolean 返回相关
+
+- includes
+- some / every
+
+### 栈 / 队列
+
+- 栈：出 pop / 入 unshift
+- 队列：出 shift / 入 push
+
+### 删除 / 插入
+
+- splice(start, deleteCount, ...items)
+
+### 副作用函数
+
+可以看 mdn 文档，与 toXXX 成对出现
+
+- sort / toSorted
+- reverse / toReversed
+- splice / toSpliced
+- ...
+
+### 字符串转换
+
+- Array.prototype.join()
+- String.prototype.split()
+
+### reduce
+
+- reduce / reduceRight
+
+单词意思，“减少、使...化为...”。通常用于计算所有元素，“浓缩”成一个新值。
+
+```javascript
+// 1-100 求和
+Array.from(new Array(100), (_, index) => index + 1).reduce((sum, i) => sum + i); // 5050
+```
+
+### 其他
+
+- flat 扁平化
+- concat 链接，一般解构赋值来写
+- copyWithin 数组自身内复制
+- ...
