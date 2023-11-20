@@ -1,0 +1,71 @@
+---
+sidebar_position: 8
+---
+
+# 对象 Object
+
+Object 是 JavaScript 的一种数据类型。它用于存储各种键值集合和更复杂的实体。
+
+JavaScript 中的一些 `Primitive` 原始类型也可看作对象，都能够直接进行属性读取和函数成员调用。
+
+```javascript
+true.toString() // "true"
+"Hello".length // 5
+5.03 .toFixed(1) // "5.0"
+Symbol.matchAll.toString() // "Symbol(Symbol.matchAll)"
+```
+
+## 属性描述符
+
+对象中存在的属性描述符有两种主要类型：数据描述符和访问器描述符。
+
+- 数据描述符是一个具有可写或不可写值的属性。
+- 访问器描述符是由 getter/setter 函数对描述的属性。
+- 描述符只能是这两种类型之一，不能同时为两者。
+
+**读写属性描述符**
+
+- Object.defineProperty()
+- Object.getOwnPropertyDescriptor()
+
+### 数据描述符
+
+- [[Enumerable]]
+- [[Configurable]]
+- [[Value]]
+- [[Writable]]
+
+### 访问器描述符
+
+- [[Enumerable]]
+- [[Configurable]]
+- [[Get]]
+- [[Set]]
+
+> 描述符共享 `Enumerable` 与 `Configurable`。
+
+### 描述符相关应用
+
+**默认值**
+
+默认是数据描述符 `value / writable`
+
+**`enumerable`**
+
+是否可枚举，决定 `for...in` 能否遍历到
+
+**`configurable`**
+
+是否可配置，如果为 false 那么：
+
+- 不允许删除属性
+- 不允许转换 `value/writable` `get/set`
+- 不允许修改描述符其他参数（只能修改 value 与 writable true => false）
+
+**`writable`**
+
+设置 writable 可以阻止对 value 的修改。（但是 value 依然有可以通过 defineProperty 来改变取值）
+
+**`get/set`**
+
+函数类型，允许我们能拦截对属性的赋值和读取操作，可以不成对出现。
