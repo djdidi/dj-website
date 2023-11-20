@@ -1,0 +1,45 @@
+---
+sidebar_position: 7
+---
+
+# 原型与原型链
+
+## 一图胜千言
+
+> 原文：http://www.mollypages.org/tutorials/js.mp
+
+![JavaScript Object Layout](https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/javascript-object-layout.jpg)
+
+## 关键属性
+
+### `prototype`
+
+作为属性 key，所有的函数都拥有 `prototype` 属性，指向该函数的原型对象。
+
+作为对象，是一个原型对象，拥有 `constructor` 属性。
+
+### `constructor`
+
+作为属性 key，所有的原型对象都拥有该属性，指向构造函数。
+
+### `__proto__`
+
+作为属性 key，所有的对象（普通对象、原型对象、函数）都拥有该属性，指向 `XXXFn.prototype`。
+
+## Function 与 Object 的原型
+
+```javascript
+// Function 本身也是个对象，由 Function 构造
+Function.__proto__ === Function.prototype // true
+Function.prototype.constructor === Function // true
+
+// Function 原型对象也是个普通对象
+Function.prototype.__proto__ === Object.prototype // true
+
+// Object 也是个普通的构造函数
+Object.__proto__ === Function.prototype // true
+Object.prototype.constructor === Object // true
+
+// 设计如此
+Object.prototype.__proto__ === null // true
+```
