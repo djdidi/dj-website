@@ -1,0 +1,78 @@
+---
+sidebar_position: 4
+---
+
+# Symbol
+
+
+## 定义
+
+symbol 是一种基本数据类型，用来生成唯一的值。
+
+## 创建
+
+symbol 类型可以由 `Symbol()` 或 `Symbol.for()` 来构造出。
+
+```javascript
+Symbol('foo') === Symbol('foo'); // false
+
+Symbol.for('bar') === Symbol.for('bar'); // true
+```
+
+- `Symbol()` 每次都构造出新的变量，丢失引用后只能通过 `Object.getOwnPropertySymbols` 再次获取。
+- `Symbol.for()` Symbol 在全局会有一个注册表，Symbol.for(key) 会先去注册表中查找 key，再创建。
+- `Symbol.keyFor()` 根据 symbol 在注册表中查 key。
+
+## Symbol 静态属性
+
+在 js 内部的实现中，会寻找 symbol 静态常量对应的方法，我们可以通过自定义 symbol key 去自定义方法。
+
+> Symbol 定义了很多静态常量，能够默默影响到许多策略，比如字符串搜索匹配、instanceof、with 等等。这种模式更像是一种钩子（Hooks）范式，能够实现不依赖类继承的能力拓展。
+
+**示例**
+
+自定义 String.prototype.search(regexp) 行为
+
+- regexp：一个正则表达式对象，或者具有 Symbol.search 方法的任意对象。
+
+```javascript
+// 大小写不敏感搜索
+class CaseInsensitiveSearch {
+  constructor(value) {
+    this.value = value.toLowerCase();
+  }
+  [Symbol.search](string) {
+    return string.toLowerCase().indexOf(this.value);
+  }
+}
+
+console.log('foobar'.search(new CaseInsensitiveSearch('BaR')));
+// expected output: 3
+```
+
+## Symbol 应用
+
+### 代替抽象类
+
+```typescript
+abstract class Handler {
+    abstract handle(req: Request): void;
+}
+
+class HTTPServer {
+    handleRequest(handler: Handler) {
+        handler.handle(new Request());
+    }
+}
+```
+
+```typescript
+const handlerSymbol = Symbol("HttpHandler");
+
+class HTTPServer {
+    handleRequest(handler: { [handlerSymbol](req: Request): void; }) {
+        handler[handlerSymbol](new Request());
+    }
+}
+
+```
