@@ -69,3 +69,179 @@ Symbol.matchAll.toString() // "Symbol(Symbol.matchAll)"
 **`get/set`**
 
 函数类型，允许我们能拦截对属性的赋值和读取操作，可以不成对出现。
+
+
+## 常见对象操作方法
+
+### 构造对象 `Object.create(proto)`
+
+```javascript
+// 创建真正的空对象，遍历敏感的case
+Object.create(null);
+```
+
+### 类型判断 `instanceof`
+
+instanceof 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上。
+
+- 通过 `[Symbol.hasInstance]` 判断
+- 通过 `__proto__` 原型链查找
+
+```javascript
+// 1.Symbol.hasInstance 自定义 instanceof 操作符在某个 class 上的行为
+class MyString {
+    static [Symbol.hasInstance](instance) {
+      return 'string' === typeof instance;
+    }
+  }
+
+console.log('abc' instanceof MyString); // true
+
+// 2.沿原型链查找
+o.__proto__.__proto__.__proto__ === Object.prototype
+```
+
+递归实现 instanceof
+
+```javascript
+function _instanceof(o, C) {
+  let p = o;
+  while (p.__proto__) {
+    if (p.__proto__ === C.prototype) {
+      return true;
+    }
+    p = p.__proto__;
+  }
+  return false;
+}
+```
+
+### 对象的结构锁定
+
+ECMAScript 还提供了另外三个静态函数，`Object.preventExtensions()`、`Object.seal()`、`Object.freeze()`，用于提供不同级别的对象锁定能力。
+
+| 操作	               | 状态判断           | 可新增属性 | 现有属性可配置 | 数据属性可写 |
+|-------------------|----------------|-------|---------|--------|
+| preventExtensions | isExtensible() | ❌     | ✅       | ✅      |
+| seal              | isSealed()     | ❌     | ❌       | ✅      |
+| freeze            | isFrozen()     | ❌     | ❌       | ❌      |
+
+
+### 对象合并
+
+两种方式 `Object.assign()` 与 `...{}`，探讨其中的区别
+
+**相同**
+
+- 都是取源对象的可枚举属性
+- 都是浅拷贝
+
+**不同**
+
+- Object.assign 以 set 的方式赋值属性
+- Object Spread(...) 以 defineProperty 的方式定义属性
+
+**伪代码实现**
+
+```javascript
+function assign(dest, src) {
+    for (let key in src) {
+        if (!src.hasOwnProperty(key)) continue;
+        // set
+        dest[key] = src[key];
+    }
+}
+
+function spread(dest, src) {
+    for (let key in src) {
+        if (!src.hasOwnProperty(key)) continue;
+        // defineProperty
+        Object.defineProperty(dest, key, {
+            value: src[key],
+            writable: true,
+            enumerable: true,
+            configurable: true
+        });
+    }
+}
+```
+
+**小结**
+
+由于 assign 是直接赋值，会沿原型链查找属性，如果属性有 `get/set` 访问器操作符，都会调用。
+
+其他大多数情况都可以互换
+
+```javascript
+let obj = { ...a, ...b };
+
+let obj2 = Object.assign({}, a, b);
+```
+
+
+## 对象的遍历
+
+把遍历需求分为 4 个层次
+
+<img src={'/img/js-object-loop.png'} width={700} />
+
+### 遍历对象自身的可枚举属性
+
+- `Object.keys/values/entries`
+
+只会遍历出对象自身的、可枚举的、键为字符串的(非 symbol)属性
+
+### 遍历对象自身的所有数据
+
+包含不可枚举属性。
+
+- `Object.getOwnPropertyNames` 可以用来获取其中的字符串键
+- `Object.getOwnPropertySymbols` 用来获取其中的 Symbol 键
+
+毕竟 symbol 是新引入的，拆分两个方法来处理。如果要所有类型的 key，`Reflect.ownKeys` 可以实现。
+
+> Object.getOwnPropertyDescriptors 也可以获取所有类型 key
+
+### 遍历对象及原型链的所有可枚举数据
+
+通过 `for...in` 遍历
+
+- 可以遍历原型链
+- 只能遍历可枚举属性
+- 只能遍历非 symbol 的 key
+
+**包含 symbol 键 + 原型链，只能自己实现**
+
+```javascript
+function getExtendedKeys(obj) {
+    const visitedKeys = new Set();
+    let current = obj;
+
+    // 向上遍历原型链
+    while (current) {
+        // 遍历当前属性
+        const keys = Reflect.ownKeys(current);
+        keys.forEach(key => {
+            visitedKeys.add(key);
+        });
+
+        current = Object.getPrototypeOf(current);
+    }
+
+    return Array.from(visitedKeys);
+}
+```
+
+### 完全自定义遍历数据
+
+**迭代器实现**
+
+- 通过迭代器 + `for...of`
+
+- 异步迭代器 + `for await...of`
+
+
+### 小结
+
+- 只有 `for...in` 能遍历原型链
+- `Object.getOwnXxxxx` 可以遍历不可枚举属性
