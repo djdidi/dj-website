@@ -1,0 +1,36 @@
+---
+sidebar_position: 6
+---
+
+在 JavaScript 中，每个函数实际上都是一个 Function 对象。
+
+## 函数的种类
+
+### 箭头函数
+
+箭头函数，语法其实是一种 lambda 表达式的写法，它没有独立的 this，不能使用 super、arguments，也不能作为构造函数使用。
+
+### async 函数
+
+`async/await` 在 ES2017 引入，是 Promise 的语法糖，每一个异步函数的返回值都是 Promise 对象。
+
+异步函数的出现，在语法层面使得异步处理更加优雅，配合 `await` 实现类似同步代码的写法。
+
+### generator 函数
+
+工作中暂时没有遇到使用场景，与迭代器部分一起总结。
+
+## 函数的结构
+
+函数是一个特殊的对象，拥有自己的属性和方法
+
+### 属性
+
+- name 函数名
+- length 参数个数
+
+### 方法
+
+- call(this, ...args) 执行函数
+- apply(this, [...args]) 执行函数
+- bind(this, ...args) 返回新函数
