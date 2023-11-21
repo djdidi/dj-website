@@ -1,0 +1,79 @@
+---
+sidebar_position: 11
+---
+
+# Reflect
+
+Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
+
+## 什么是反射
+
+反射是一种在运行时检查、访问和修改类、属性、方法和接口的能力，有点类似于从“上帝视角”来操控万物。
+
+ECMAScript 从 ES5 开始引入属性描述符后，事实上已经带有一些体现反射能力的 API 了，比如 `Object.getPrototypeOf/getOwnPropertyDescriptor/getOwnPropertyNames/defineProperty` 等等。但是还不够体系化，功能也还不足。
+
+ES6 引入了对标其它语言的独立反射模块，称之为 `Reflect API`。
+
+
+## Reflect 的功能
+
+`Reflect API` 囊括了一系列的对象访问方法，虽然之前有替代写法，但是 Reflect 让这些操作都聚合在一个命名空间之下。
+
+### 函数调用
+
+`Reflect.apply(target, thisArgument, argumentsList)`
+
+与 `Function.prototype.apply` 等价
+
+### 对象创建
+
+`Reflect.construct(target, argumentsList[, newTarget])`
+
+- 只有前两个参数等同于 `new`
+- 第三个参数指定 `newObj.__proto__.constructor`
+
+### 属性读写
+
+同 Object 的同名方法，但是 Object 相关会抛出异常，`Reflect` 相关操作返回 boolean。
+
+**描述符的读写**
+
+- `Reflect.getOwnPropertyDescriptor`
+- `Reflect.defineProperty`
+
+**原型的读写**
+
+- `Reflect.getPrototypeOf`
+- `Reflect.setPrototypeOf`
+
+**值的读写**
+
+- `Reflect.get`
+- `Reflect.set`
+
+会接受第三个参数 `receiver`，是描述符 `getter` 调用时的 this 值，默认是对象本身。
+
+**删除属性**
+
+- `Reflect.deleteProperty` 同 `delete` 操作符
+
+### 对象访问
+
+判断一个属性有没有存在于一个对象上，有一个条件是**要不要考虑原型链**。
+
+**之前：**
+
+- 不考虑原型链 `Object.hasOwnProperty`、`Object.hasOwn` (建议使用，更完善)
+- 考虑原型链 `in` 操作符
+
+**通过 Reflect**
+
+- `Reflect.has` 相当于 `in` 操作符
+
+**其他**
+
+- `Reflect.isExtensible`
+- `Reflect.preventExtensions`
+
+> `Reflect API` 一些 Object 同名方法更加严格，如果 target 参数不是一个对象（例如是原始值），那么将造成一个 TypeError 异常。
+
