@@ -1,0 +1,151 @@
+---
+sidebar_position: 9
+---
+
+# 类 class
+
+## class 是什么
+
+**JavaScript 中 `class` 就是构造函数的语法糖，class 能实现的所有能力，我们用普通函数都能实现。**
+
+> 虽然如此，class 支持的 super、static 块、static 属性、私有属性、extend 继承等等特性，涉及到原型链查找、闭包等诸多细节，模拟起来并非易事。
+>
+> class 帮助我们减少了很多编码成本，背后隐藏了大量对象的操作细节。
+
+**快速观察转换 function 结果**
+
+可以使用 typescript 或者 babel 转换到 ES5 来观察，基本是 辅助函数 + 原型链实现。
+
+> typescript playground https://www.typescriptlang.org/play
+>
+> babel Try It Out
+
+
+## 使用 Function 实现
+
+只讨论常规实现，体会过程，一些没有意义的历史 hack 实现不去关心。
+
+### 构造函数
+
+无论是 function 语法还是 class 语法，最终都是用 `new` 操作符来创建对象实例。
+
+> MDN-new 关键字会进行如下的操作：
+>
+> 1. 创建一个空的简单 JavaScript 对象（即 {}）；
+> 2. 为步骤 1 新创建的对象添加属性 __proto__，将该属性链接至构造函数的原型对象；
+> 3. 将步骤 1 新创建的对象作为 this 的上下文；
+> 4. 如果该函数没有返回对象，则返回 this。
+
+**模拟 new 实现**
+
+```typescript
+function createInstance (Constructor: Function, ...args: any[]) {
+  const obj = Object.create(Constructor.prototype);
+
+  const result = Constructor.apply(p, ...args);
+
+  if (typeof result === 'object') {
+    return result;
+  }
+
+  return obj;
+}
+```
+
+> Tips：`new.target` 无法实现。检测一个函数是否是作为构造函数通过new被调用的。
+
+### 类成员
+
+- 属性：定义在对象自身上
+- 方法：定义在原型上
+
+```javascript
+// 1.属性
+function Parent() {
+  // 这样写可以避免继承时 get/set 副作用
+  Object.defineProperty(this, 'name', {
+    enumerable: true,
+    configurable: true,
+    writable: true,
+    value: '',
+  });
+
+  this.name = name;
+}
+// 2.方法
+Object.defineProperty(Parent.prototype, 'hello', {
+    value: function () {
+        console.log(`hello，I am ${this.name}.`);
+    },
+    enumerable: false, // 不可枚举
+    writable: true,
+    configurable: true,
+});
+```
+
+### 类继承
+
+```javascript
+function Parent(name) {
+  /* 同上 */
+}
+
+// 子构造函数
+function Child(name) {
+  // 1.super
+  Parent.call(this, name);
+
+  // 2.自身属性
+  Object.defineProperty(this, 'age', {
+    enumerable: true,
+    configurable: true,
+    writable: true,
+    value: 5,
+  });
+}
+
+// 3.设置原型链，原型对象 `__proto__ = Parent.prototype`
+Object.setPrototypeOf(Child.prototype, Parent.prototype);
+
+// 3.也可以自己搞一个原型对象。通过 `Object.create` 关联原型对象；要实现 `constructor`；
+Child.prototype = Object.create(Parent.prototype, {
+  constructor: {
+    value: Child,
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  },
+  hello: {
+    enumerable: false,
+    configurable: true,
+    writable: true,
+    value: function () {
+      // 同 super.hello()
+      Parent.prototype.hello.call(this);
+      console.log(`And I am ${this.age} years old.`);
+    },
+  },
+  jump: {
+    enumerable: false,
+    configurable: true,
+    writable: true,
+    value: function () {
+      console.log('I like jumping.');
+    },
+  },
+});
+```
+
+### 静态成员
+
+```javascript
+Parent.home = "beijing";
+Child.type = "kid";
+
+Object.setPrototypeOf(Child, Parent);
+```
+
+
+
+
+
