@@ -8,7 +8,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 
 ## 什么是反射
 
-反射是一种在运行时检查、访问和修改类、属性、方法和接口的能力，有点类似于从“上帝视角”来操控万物。
+反射是一种在运行时检查、访问和修改类、属性、方法和接口的能力。
 
 ECMAScript 从 ES5 开始引入属性描述符后，事实上已经带有一些体现反射能力的 API 了，比如 `Object.getPrototypeOf/getOwnPropertyDescriptor/getOwnPropertyNames/defineProperty` 等等。但是还不够体系化，功能也还不足。
 
@@ -77,3 +77,16 @@ ES6 引入了对标其它语言的独立反射模块，称之为 `Reflect API`�
 
 > `Reflect API` 一些 Object 同名方法更加严格，如果 target 参数不是一个对象（例如是原始值），那么将造成一个 TypeError 异常。
 
+## 小结
+
+总体来说，Reflect API 做出了两方面的贡献。
+
+1. 将一些对象的“元编程”操作归拢到了同一个命名空间之下，方便使用；
+2. 提供了之前不具备或者不方便使用的能力，比如 Reflect.ownKeys。
+
+Reflect 和 Object 有很多静态方法是同名的，差别也只体现在两方面：
+
+1. 对传入非对象的处理态度不同；
+2. 返回值（报错方式） 不同。
+
+> 元编程（Meta Programming），指的是在运行时操作和分析代码自身的行为。反射是元编程的关键组成部分。
