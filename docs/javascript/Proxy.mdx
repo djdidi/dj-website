@@ -1,0 +1,168 @@
+---
+sidebar_position: 12
+---
+
+## Proxy 概念
+
+Proxy 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。
+
+**语法**
+```javascript
+const proxyObj = new Proxy(target, handler)
+```
+
+- `target` 被 Proxy 代理的对象
+- `handler` 是一个包含了一组捕获器（也称为 trap）的对象
+
+## handler 详解
+
+handler 就是一个普通对象，到 ES2023 共有 13 个函数属性，代表一个对象的各种操作。
+
+> 事实上，任意对象操作都可以分解成这些元操作的组合。
+
+### `get/setPrototypeOf`
+
+操作对象原型时通过此方法拦截。
+
+```javascript
+// 1.通过 getPrototypeOf 拦截原型获取，改写 instanceof 结果
+const proxy = new Proxy(origin, {
+    getPrototypeOf() {
+       return Number.prototype;
+    }
+});
+console.log(proxy instanceof Number); // true
+
+// 2.通过 setPrototypeOf 拦截原型设置
+const origin = {
+    name: 'Mike'
+};
+Object.preventExtensions(origin)
+const proxy2 = new Proxy(origin, {
+    setPrototypeOf(V) {
+        return true;
+    }
+});
+
+Reflect.setPrototypeOf(proxy, Reflect.getPrototypeOf(origin)); // true
+Reflect.setPrototypeOf(proxy, null); // ❌ TypeError......
+```
+
+> TypeError 约束：如果 target 不可拓展，原型结果必须与 Object.getPrototypeOf(target) 的值相同。
+
+### `isExtensible/preventExtensions`
+
+对操作可拓展性相关的拦截。
+
+### `get/set/deleteProperty`
+
+操作属性相关拦截
+
+- `proxy[foo]`、`proxy.foo`
+- 访问原型链上属性
+- `Reflect.get(proxy, 'foo')`
+- `delete proxy.foo`
+
+### 其他
+
+- ownKeys
+- getOwnPropertyDescriptor
+- has
+- ......
+
+### 小结
+
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/js-proxy.png' width='500' />
+
+### 不变量的概念(Invariants)
+
+ECMAScript 规范定义了一种叫做不变量（Invariants）的概念。不变量是一种特殊的规则或属性，无论发生什么事情，它们都不会改变，即便是 Proxy 也要遵守。
+
+> 我们定义 handler 的原则，是要保证目标对象和 Proxy 对象独立操作后，它们各自的特性不违反基本的对象法则，如可扩展性、可写性、可配置性等。
+>
+> 不变量的存在从另一个角度决定了我们并不能为所欲为地控制 Proxy 的行为，还是**要遵循基本的客观规律**。
+
+**如何体会**
+
+MDN Proxy 文档中，关于**约束**和一些 **`TypeError`** 都与不变量的概念有关。
+
+## 示例
+
+### 数据的可响应性
+
+Proxy 更多应用于数据的可响应性（reactive）改造
+
+> Vue2 是基于 `Object.defineProperty` 的，它的弊端是无法捕获新增加的属性，必须主动调用 $set 通知 Vue。而且 Vue2 也无法响应数组的下标操作。
+
+一个拦截属性的伪代码。
+
+```javascript
+class MyVue {
+  #data: {};
+
+  options: { data: {} };
+
+  updateDOM() {
+    /* noop */
+  }
+
+  get data() {
+    if (this.#data) return this.#data;
+
+    this.#data = new Proxy(this.options.data, {
+      defineProperty: (target, p, desc) => {
+        const ret = Reflect.defineProperty(target, p, desc);
+        this.updateDOM();
+        return ret;
+      },
+      set: (target, p, v) => {
+        const ret = Reflect.set(target, p, v);
+        this.updateDOM();
+        return ret;
+      },
+      deleteProperty: (target, p) => {
+        const ret = Reflect.deleteProperty(target, p);
+        this.updateDOM();
+        return ret;
+      },
+    });
+
+    return this.#data;
+  }
+}
+```
+
+> 以上只支持最顶层属性变动，如果要拦截多级结构，得需要把数据每一层都转换为 Proxy 对象才行。
+
+
+
+### promisify 小程序 wx 对象
+
+```javascript
+const promisifyWx = new Proxy(wx, {
+  get(wx, api) {
+    if (typeof wx[api] === 'function') {
+      return options => new Promise((resolve, reject) => {
+        wx[api]({
+          ...options,
+          success(res) {
+            options.success?.(res);
+            resolve(res);
+          },
+          fail(err) {
+            options.fail?.(err);
+            reject(err);
+          },
+          complete() {
+            options.complete?.();
+          },
+        });
+      });
+    } else {
+      return wx[api];
+    }
+  },
+});
+
+export default promisifyWx;
+```
