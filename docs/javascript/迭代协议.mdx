@@ -2,4 +2,193 @@
 sidebar_position: 14
 ---
 
+## 迭代协议
+
+迭代协议并不是新的内置实现或语法，而是协议。这些协议可以被任何遵循某些约定的对象来实现。
+
+要理解迭代对象，要先理解迭代协议。有两种迭代协议：
+
+- 迭代器协议(Iterator protocol)
+- 可迭代协议(Iterable protocol)
+
+### 可迭代协议
+
+**定义**
+
+可迭代协议允许 JavaScript 对象定义或定制它们的迭代行为。
+
+**可迭代对象**
+
+对象必须实现 `@@iterator` 方法，意味着可以通过 `[Symbol.iterator]` 访问到该方法，**返回一个符合迭代器协议的对象**。
+
+### 迭代器协议
+
+**定义**
+
+迭代器协议定义了产生一系列值（无论是有限/无限个）的标准方式。
+
+**符合迭代器协议的对象/迭代器**
+
+实现了一个拥有以下方法，且方法返回符合 `IteratorResult` 接口的对象，一个对象才能成为迭代器：
+
+1. **(必须)** `next()`
+2. **(可选)** `return()`、`throw()`
+
+```typescript
+interface IteratorResult {
+  done: boolean; // 迭代完毕返回 true；未完 false
+  value: any;
+}
+```
+
+## Iterators
+
+### 内置对象
+
+一些内置对象都实现了 `[Symbol.iterator]` 方法，都是可迭代对象，如 String、Array、Map、Set 等。
+
+### 自定义迭代器
+
+自定义 `[Symbol.iterator]` 方法。
+
+```javascript
+// 打印 [0-max]
+class MyIterator {
+  num = 0;
+  MAX = 5;
+
+  constructor(max = 5) {
+    this.MAX = max;
+  }
+
+  [Symbol.iterator]() {
+    return {
+      next: () => {
+        if (this.num <= 10) {
+          return { value: this.num++, done: false };
+        }
+        return { value: undefined, done: true };
+      },
+    };
+  }
+}
+
+let myIterator = new MyIterator(10);
+
+// 1.for...of 迭代
+for (const num of myIterator) {
+  console.log(num);
+}
+
+// 2.while 自己运行迭代器
+let iterator = myIterator[Symbol.iterator]();
+let result = iterator.next();
+while( !result.done ) {
+  console.log(result.value);
+  result = iterator.next();
+}
+
+// log 0....10
+```
+
+### 参数接受可迭代对象的API
+
+- Map()
+- Set()
+- Promise.all/race...
+- Array.from()
+- ...
+
+### 可操作可迭代对象的语法
+
+- `for...of`
+- `数组/数组拓展`
+- `yield*`
+- `解构`
+
+## Generators
+
+Generator 生成器对象由生成器函数返回，并且它符合*可迭代协议* 和 *迭代器协议*。
+
+### function*
+
+在 JavaScript 中，普通的函数开始执行后，只有提前返回或抛错才会中断。
+
+生成器函数 `function*` 在执行时能暂停，后面又能从暂停处继续执行。
+
+### yield
+
+yield 关键字可以暂停和恢复生成器函数
+
+语法 `[variable_name] = yield [expression];`
+
+- `[expression]` 的返回值是迭代协议的 `value` 值
+- `[variable_name]` 的值是迭代协议的 `next(param)` 参数
+
+**示例**
+
+```javascript
+// case 1:
+function* yieldArrayElements() {
+    yield 1;
+    yield* [ 20, 30, 40 ];
+}
+let a = yieldArrayElements();
+console.log(a.next()); // { value: 1, done: false }
+console.log(a.next()); // { value: 20, done: false }
+console.log(a.next()); // { value: 30, done: false }
+console.log(a.next()); // { value: 40, done: false }
+
+// case 2:
+function* baz() {
+    let arr = [yield 'a', yield 'b'];
+    console.log(arr);
+}
+let z = baz();
+console.log(z.next()); // {value: 'a', done: false}
+console.log(z.next(1)); // {value: 'b', done: false}
+console.log(z.next(2)); // [1, 2] \n {value: undefined, done: true}
+```
+
+### 示例
+
+使用 `function*` 实现上面的自定义迭代器
+
+```javascript
+class MyIterator {
+  num = 0;
+  MAX = 5;
+
+  constructor(max = 5) {
+    this.MAX = max;
+  }
+
+  * [Symbol.iterator]() {
+    while (this.num <= this.MAX) {
+      yield this.num++;
+    }
+  }
+}
+
+let myIterator = new MyIterator(10);
+
+for (const num of myIterator) {
+  console.log(num);
+}
+
+// log 0....10
+```
+
+### 异步的
+
+迭代协议
+
+- 使用 `[Symbol.asyncIterator]` 代替 `[Symbol.iterator]`
+- `[Symbol.asyncIterator]` 方法返回一个 Promise next()
+- 使用 `for await...of` 迭代
+
+生成器函数
+
+- `async function*`
+- `yield` 后跟 Promise
 
