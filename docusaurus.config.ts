@@ -1,22 +1,17 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'dj blog',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.svg',
+  title: 'DJ的博客',
+  tagline: 'Drop The Beat',
+  // favicon: 'img/favicon.svg',
 
   // Set the production url of your site here
-  url: 'https://blog.djdidi.xyz',
+  url: 'https://djdidi.xyz',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'djdidi', // Usually your GitHub org/user name.
-  projectName: 'dj-website', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -34,7 +29,6 @@ const config: Config = {
       'classic',
       {
         docs: {
-          routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -60,24 +54,30 @@ const config: Config = {
       defaultMode: 'light',
       disableSwitch: true,
     },
-    // Replace with your project's social card
-    image: 'img/gouzi.png',
     navbar: {
-      title: 'dj个人博客',
-      logo: {
-        src: 'img/favicon.svg',
-      },
+      title: 'DJ的博客',
+      hideOnScroll: true,
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
+          sidebarId: 'frontendBase',
           label: '前端基础',
+          position: 'left',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'wheelSource',
+          label: '轮子源码',
+          position: 'left',
         },
         {
           to: '/blog/welcome',
           label: 'blog',
           position: 'left',
+        },
+        {
+          type: 'search',
+          position: 'right',
         },
         {
           href: 'https://cloud.tencent.com',
@@ -86,23 +86,10 @@ const config: Config = {
         },
       ],
     },
+    liveCodeBlock: {
+      playgroundPosition: 'bottom',
+    },
     footer: {
-      style: 'dark',
-      links: [
-        {
-          title: '组别A',
-          items: [
-            {
-              label: '内部跳转',
-              to: '/blog/welcome',
-            },
-            {
-              label: '外部跳转',
-              href: 'https://cloud.tencent.com',
-            },
-          ],
-        },
-      ],
       copyright: `<div>Built with Docusaurus. 晋ICP备20003213号-1</div> `,
     },
     prism: {
@@ -110,6 +97,9 @@ const config: Config = {
       // darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+
+  plugins: [
+  ],
 };
 
 export default config;
