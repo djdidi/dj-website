@@ -1,0 +1,87 @@
+## 模块化背景
+
+JavaScript 程序本来很小——在早期，它们大多被用来执行独立的脚本任务。
+
+随着程序的复杂，带来了一些问题：
+
+- 命名冲突
+- 全局污染
+- ...
+
+**解决问题**
+
+随着代码量的增加，需要复用来提升开发和运行效率。一些解决方案应运而生。
+
+大致发展如下
+
+- CommonJS(nodejs) 2009年
+- requireJS(AMD)   2010年
+- seaJS(CMD)       2011年
+- ES6(Module)      2015年
+
+> 社区方案在一定程度上解决了模块化的问题，但是它们都是基于特定的语法和加载器实现的，没有被纳入 JavaScript 语言标准中。
+
+**标准规范**
+
+`ESM（ECMAScript Modules）` 是官方的模块化规范，于 2015 年发布的 ES6 中引入。
+
+ESM 提供一种原生的、标准的模块化方式，使得模块的导入和导出更加简洁和直观，并且完全不依赖全局环境。
+
+## ESM
+
+### 基本用法
+
+- `export`：单个/一批/默认导出、合并import写法
+- `import`：单个/多个/整个、动态导入 、Import assertions(nodejs)
+
+### 特性
+
+**静态导入**
+
+ESM 对依赖的声明都是静态的，既不能在 import 语句中使用变量，也不能把 import 声明到非顶端的位置。
+
+- 可以静态分析，如 `Tree Shaking`
+
+**ESM 对于原始类型也是传递句柄引用**
+
+对比 CommonJS
+
+```javascript
+// bar.js
+exports.bar = 23;
+
+exports.getBar = function() {
+    return bar;
+}
+
+exports.setBar = function(v) {
+    bar = v;
+}
+
+// index.js
+const { bar, setBar, getBar } = require('./bar.js');
+console.log(bar); // 23
+setBar(34);
+console.log(bar, getBar()); // 23 34
+```
+
+```javascript
+// bar.mjs
+export let bar = 23;
+
+export const getBar = function() {
+    return bar;
+}
+
+export const setBar = function(v) {
+    bar = v;
+}
+
+// index.mjs
+import { bar, setBar, getBar } from './bar.mjs';
+console.log(bar); // 23
+setBar(34);
+console.log(bar, getBar()); // 34 34
+```
+
+
