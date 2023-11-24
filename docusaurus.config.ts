@@ -3,14 +3,12 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'DJ的博客',
+  title: 'DJ\'s Blog',
   tagline: 'Drop The Beat',
-  // favicon: 'img/favicon.svg',
+  favicon: 'img/favicon.svg',
 
   // Set the production url of your site here
   url: 'https://djdidi.xyz',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   onBrokenLinks: 'throw',
@@ -30,17 +28,10 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          // editUrl:
-          //   'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          // editUrl:
-          //   'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          blogSidebarTitle: 'Recent Posts',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -55,33 +46,37 @@ const config: Config = {
       disableSwitch: true,
     },
     navbar: {
-      title: 'DJ的博客',
+      title: 'DJ\'s Blog',
+      logo: {
+        src: 'img/favicon.svg',
+      },
       hideOnScroll: true,
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'frontendBase',
-          label: '前端基础',
+          label: 'Note',
           position: 'left',
         },
         {
           type: 'docSidebar',
           sidebarId: 'wheelSource',
-          label: '轮子源码',
+          label: 'Code',
           position: 'left',
         },
         {
-          to: '/blog/welcome',
-          label: 'blog',
+          to: '/blog',
+          label: 'Blog',
           position: 'left',
+        },
+        {
+          href: 'https://github.com/djdidi/dj-website',
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
         {
           type: 'search',
-          position: 'right',
-        },
-        {
-          href: 'https://cloud.tencent.com',
-          label: '外链T',
           position: 'right',
         },
       ],
@@ -90,6 +85,7 @@ const config: Config = {
       playgroundPosition: 'bottom',
     },
     footer: {
+      style: 'light',
       copyright: `<div>Built with Docusaurus. 晋ICP备20003213号-1</div> `,
     },
     prism: {
