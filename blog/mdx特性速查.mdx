@@ -2,7 +2,7 @@ import BrowserWindow from '../src/components/BrowserWindow';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## MDX 拓展
+## mdx 拓展
 
 ### Details 展开折叠
 
@@ -20,7 +20,7 @@ import TabItem from '@theme/TabItem';
   </div>
 </details>
 
-### React 组件使用
+### React 组件
 
 export const Highlight = ({ children, color }) => (
   <span
@@ -62,13 +62,30 @@ export const Highlight = ({children, color}) => (
 
 ### Tabs 选项卡
 
+```jsx title="mdxjs"
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+  <TabItem value="apple" label="Apple" default>
+    This is an apple 🍎
+  </TabItem>
+  <TabItem value="orange" label="Orange">
+    This is an orange 🍊
+  </TabItem>
+  <TabItem value="banana" label="Banana">
+    This is a banana 🍌
+  </TabItem>
+</Tabs>
+```
+
 <BrowserWindow>
   <Tabs
     defaultValue="apple"
     values={[
-      {label: 'Apple', value: 'apple'},
-      {label: 'Orange', value: 'orange'},
-      {label: 'Banana', value: 'banana'},
+      { label: 'Apple', value: 'apple' },
+      { label: 'Orange', value: 'orange' },
+      { label: 'Banana', value: 'banana' },
     ]}>
     <TabItem value="apple">This is an apple 🍎</TabItem>
     <TabItem value="orange">This is an orange 🍊</TabItem>
@@ -77,7 +94,7 @@ export const Highlight = ({children, color}) => (
 </BrowserWindow>
 
 
-### 代码高亮
+### Code Block 高亮
 
 **使用注释标记**
 
@@ -94,13 +111,15 @@ function hello2() {
   // highlight-start
   console.log('hello world');
   console.log('world');
-    // highlight-end
+  // highlight-end
   console.log('你好，世界');
+  // highlight-error
+  console.error(null.toString); // Uncaught TypeError: Cannot read properties of null (reading 'toString')
 }
 ```
 ````
 
-```js
+```js title="javascript"
 function hello() {
   // highlight-next-line
   console.log('hello world');
@@ -112,15 +131,18 @@ function hello2() {
   // highlight-start
   console.log('hello world');
   console.log('world');
-    // highlight-end
+  // highlight-end
   console.log('你好，世界');
+  // Uncaught TypeError: Cannot read properties of null (reading 'toString')
+  // highlight-error
+  console.error(null.toString);
 }
 ```
 
 **使用 metadata 标记**
 
 ````md
-```js {3,4} showLineNumbers title=javascript
+```js {2,3} showLineNumbers title="javascript"
 function hello() {
   console.log('hello world');
   console.log('world');
@@ -137,37 +159,124 @@ function hello() {
 }
 ```
 
+**diff 高亮**
+
+```diff showLineNumbers
+function HighlightSomeText(highlight) {
+  if (highlight) {
++   console.log('Highlighted text found');
+-   console.log('Highlighted text found');
+    return 'This text is highlighted!';
+  }
+  return 'Nothing highlighted';
+}
+````
+
+
 ### 可交互代码编辑器
 
-代码块 metadata 添加 `live`，只能渲染单个组件
+代码块 metadata 添加 `live`。
+
+> power by [react-live](https://github.com/FormidableLabs/react-live)
 
 ```mdx-code-block
 <BrowserWindow>
 ```
 
-```jsx
-function Hello() {
-  return (
-    <Hello>hello world!</Hello>
-  );
-}
+**Inline Demo**
+
+```jsx live
+<h3 style={{
+  background: 'darkslateblue',
+  color: 'white',
+  padding: 8,
+  borderRadius: 4
+}}>
+  Hello World! 👋
+</h3>
 ```
+---
 
-**命令式渲染**
+**React Function**
 
-添加 `onInline` 属性，调用 `render(comp)` 方法。
+代码块 metadata 添加 `noInline` 属性，调用 `render(comp)` 方法。
 
-```jsx
-const project = 'Docusaurus';
-
-const Greeting = () => <p>Hello {project}!</p>;
-
-render(<Greeting />);
+```jsx live noInline
+const Counter = (props) => {
+  const [count, setCount] = React.useState<number>(0);
+  return (
+    <div>
+      <h3 style={{
+        background: 'darkslateblue',
+        color: 'white',
+        padding: 8,
+        borderRadius: 4,
+      }}>
+        count = {count}
+      </h3>
+      <button
+        onClick={() =>
+          setCount(c => c + 1)
+        }>
+        Increment++
+      </button>
+    </div>
+  );
+};
+render(<Counter />);
 ```
 
 ```mdx-code-block
 </BrowserWindow>
 ```
+
+### Admonitions 告示
+
+```markdown title="markdown"
+:::note[自定义告示标题 `markdown` `syntax`]
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::tip
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::info
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::warning
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::danger
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+```
+
+---
+
+:::note[自定义告示标题 `markdown` `syntax`]
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::tip
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::info
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::warning
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+:::danger
+Some **content** with _Markdown_ `syntax`. Check *this `api`*.
+:::
+
+---
 
 ## markdown 基础
 
