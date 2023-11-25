@@ -100,6 +100,8 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
+  themes: ['@docusaurus/theme-live-codeblock'],
+
   plugins: [
   ],
 };

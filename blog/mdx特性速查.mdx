@@ -1,0 +1,288 @@
+import BrowserWindow from '../src/components/BrowserWindow';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## MDX 拓展
+
+### Details 展开折叠
+
+<details>
+  <summary>Toggle me!</summary>
+  <div>
+    <div>This is the detailed content</div>
+    <br />
+    <details>
+      <summary>
+        Nested toggle! Some surprise inside...
+      </summary>
+      <div>😲😲😲😲😲</div>
+    </details>
+  </div>
+</details>
+
+### React 组件使用
+
+export const Highlight = ({ children, color }) => (
+  <span
+    style={{
+      backgroundColor: color,
+      borderRadius: '2px',
+      color: '#fff',
+      padding: '0.2rem',
+    }}>
+    {children}
+  </span>
+);
+
+<BrowserWindow>
+  <Highlight color="#25c2a0">Docusaurus green</Highlight> and
+  <Highlight color="#1877F2">Facebook blue</Highlight>
+  are my favorite colors.
+</BrowserWindow>
+
+```jsx
+export const Highlight = ({children, color}) => (
+  <span
+    style={{
+      backgroundColor: color,
+      borderRadius: '2px',
+      color: '#fff',
+      padding: '0.2rem',
+    }}>
+    {children}
+  </span>
+);
+
+<>
+  <Highlight color="#25c2a0">Docusaurus green</Highlight> and
+  <Highlight color="#1877F2">Facebook blue</Highlight>
+  are my favorite colors.
+</>
+```
+
+### Tabs 选项卡
+
+<BrowserWindow>
+  <Tabs
+    defaultValue="apple"
+    values={[
+      {label: 'Apple', value: 'apple'},
+      {label: 'Orange', value: 'orange'},
+      {label: 'Banana', value: 'banana'},
+    ]}>
+    <TabItem value="apple">This is an apple 🍎</TabItem>
+    <TabItem value="orange">This is an orange 🍊</TabItem>
+    <TabItem value="banana">This is a banana 🍌</TabItem>
+  </Tabs>
+</BrowserWindow>
+
+
+### 代码高亮
+
+**使用注释标记**
+
+````md
+```js
+function hello() {
+  // highlight-next-line
+  console.log('hello world');
+  console.log('world');
+  console.log('你好，世界');
+}
+
+function hello2() {
+  // highlight-start
+  console.log('hello world');
+  console.log('world');
+    // highlight-end
+  console.log('你好，世界');
+}
+```
+````
+
+```js
+function hello() {
+  // highlight-next-line
+  console.log('hello world');
+  console.log('world');
+  console.log('你好，世界');
+}
+
+function hello2() {
+  // highlight-start
+  console.log('hello world');
+  console.log('world');
+    // highlight-end
+  console.log('你好，世界');
+}
+```
+
+**使用 metadata 标记**
+
+````md
+```js {3,4} showLineNumbers title=javascript
+function hello() {
+  console.log('hello world');
+  console.log('world');
+  console.log('你好，世界');
+}
+```
+````
+
+```js {2,3} showLineNumbers title="javascript"
+function hello() {
+  console.log('hello world');
+  console.log('world');
+  console.log('你好，世界');
+}
+```
+
+### 可交互代码编辑器
+
+代码块 metadata 添加 `live`，只能渲染单个组件
+
+```mdx-code-block
+<BrowserWindow>
+```
+
+```jsx
+function Hello() {
+  return (
+    <Hello>hello world!</Hello>
+  );
+}
+```
+
+**命令式渲染**
+
+添加 `onInline` 属性，调用 `render(comp)` 方法。
+
+```jsx
+const project = 'Docusaurus';
+
+const Greeting = () => <p>Hello {project}!</p>;
+
+render(<Greeting />);
+```
+
+```mdx-code-block
+</BrowserWindow>
+```
+
+## markdown 基础
+
+### 标题
+
+```markdown title="markdown"
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+```
+
+### 字体
+
+- **加粗**
+- *斜体*
+- ~删除线~
+- <u>下划线</u>
+
+```markdown title="markdown"
+**加粗**
+*斜体*
+~删除线~
+<u>下划线</u>
+```
+
+### 分割线
+
+---
+
+```markdown title="markdown"
+---
+```
+
+### 列表
+
+- 无序列表1
+- 无序列表1
+- 无序列表1
+
+1. 有序列表1
+2. 有序列表2
+3. 有序列表3
+
+- 嵌套列表
+1. 有序列表1
+2. 有序列表1
+- 嵌套列表
+- 无序列表
+- 无序列表
+
+```markdown title="markdown"
+- 无序列表1
+- 无序列表1
+- 无序列表1
+
+1. 有序列表1
+2. 有序列表2
+3. 有序列表3
+
+- 嵌套列表
+    1. 有序列表1
+    2. 有序列表1
+- 嵌套列表
+    - 无序列表
+    - 无序列表
+```
+
+### 区块
+
+> 区块> 嵌套区块嵌套区块> 第三层区块
+
+```markdown title="markdown"
+> 区块
+> > 嵌套区块
+> >
+> > 嵌套区块
+> > > 第三层区块
+```
+
+### 代码
+
+`段落代码 Hello World`
+
+```javascript title="代码块"
+function hello() {
+  console.log('hello world');
+}
+```
+
+### 链接/图片
+
+[MDN文档](https://developer.mozilla.org/zh-CN/)
+
+<img src="https://developer.mozilla.org/assets/mdn_contributor.png" width='200' />
+
+```markdown titie="markdown"
+[链接名称](链接地址)
+
+![alt 属性文本](图片地址)
+
+调整宽度 <img src="" width='500' />
+```
+
+### 表格
+
+|  表头   | 表头  |
+|  ----  | ----  |
+| 单元格  | 单元格 |
+| 单元格  | 单元格 |
+
+```markdown tile="markdown"
+|  表头   | 表头  |
+|  ----  | ----  |
+| 单元格  | 单元格 |
+| 单元格  | 单元格 |
+```
