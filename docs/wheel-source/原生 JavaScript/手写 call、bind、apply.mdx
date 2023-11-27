@@ -1,0 +1,56 @@
+---
+sidebar_position: 3
+---
+
+## 函数功能
+
+**call / apply**
+
+- 直接调用函数，指定函数执行时的 `this`
+- call 参数逐个传递，apply 参数数组传递
+
+**bind**
+
+- 指定函数运行时 this，返回新绑定函数
+- 参数逐个传递，同 call
+- bind 调用时的参数，会插入到绑定函数参数前面
+
+## 代码实现
+
+主要思路
+
+- call/bind/apply 是 Function 原型上的方法，`this` 指向当前函数
+- 将 `this` 作为 ctx 的属性，通过 `ctx[fn]` 调用，来改变指向
+
+```javascript title="实现 call"
+Function.prototype._call = function (ctx, ...args) {
+  const fn = Symbol('fn');
+  ctx[fn] = this;
+
+  const result = ctx[fn](...args);
+  delete ctx[fn];
+
+  return result;
+};
+```
+
+```javascript title="实现 apply"
+Function.prototype._apply = function (ctx, args) {
+  const fn = Symbol('fn');
+  ctx[fn] = this;
+
+  const result = ctx[fn](...args);
+  delete ctx[fn];
+
+  return result;
+};
+```
+
+```javascript title="实现 bind"
+Function.prototype._bind = function (ctx, ...args1) {
+  return (...args2) => {
+    this.call(ctx, ...args1, ...args2);
+  };
+}
+```
+

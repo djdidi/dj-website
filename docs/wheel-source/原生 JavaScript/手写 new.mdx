@@ -1,0 +1,24 @@
+---
+sidebar_position: 4
+---
+
+**来自 MDN 文档**
+
+当使用 new 关键字调用函数时，该函数将被用作构造函数。new 将执行以下操作：
+
+1. 创建一个空的简单 JavaScript 对象。称之为 newInstance。
+2. 将 newInstance 的 [[Prototype]] 指向构造函数的这个属性。
+3. 使用给定参数执行构造函数，在构造函数中的所有 this 引用都指向 newInstance。
+4. 如果构造函数返回非原始值，则该返回值成为整个 new 表达式的结果。否则，如果构造函数未返回任何值或返回了一个原始值，则返回 newInstance。
+
+**代码实现**
+
+```javascript title="手写 new"
+function _new(Constructor, ...args) {
+  const newInstance = Object.create(Constructor.prototype);
+
+  const result = Constructor.call(newInstance, ...args);
+
+  return typeof result === 'object' ? result : newInstance;
+}
+```

@@ -1,0 +1,218 @@
+---
+sidebar_position: 5
+---
+
+## promise 核心功能实现
+
+主要功能
+
+- 实例方法 then / catch / finally
+- 静态方法 resolve / reject / all / race / any / allSettled
+- 链式调用。返回新promise；新promise状态被resolveFunc返回影响
+
+未实现
+
+- 没有校验
+- 没有处理 `thenable`
+
+---
+
+```javascript title="javascript" showLineNumbers
+const State = {
+  pending: 'pending',
+  fulfilled: 'fulfilled',
+  rejected: 'rejected',
+};
+
+class _Promise {
+  #state = State.pending;
+  #result;
+  #onRejectedCallbacks = [];
+  #rejectCallbacks = [];
+
+  constructor(executor) {
+    if (typeof executor !== 'function') {
+      throw new TypeError('Promise resolver undefined is not a function');
+    }
+
+    const resolve = (value) => {
+      this.#result = value;
+      this.#state = State.fulfilled;
+      // highlight-start
+      // queryMicrotask
+      process.nextTick(() => {
+        for (let cb of this.#onRejectedCallbacks) {
+          cb(value);
+        }
+      });
+      // highlight-end
+    };
+
+    const reject = (reason) => {
+      if (this.#state !== State.pending) {
+        return;
+      }
+
+      this.#state = State.rejected;
+      this.#result = reason;
+      process.nextTick(() => {
+        for (let cb of this.#rejectCallbacks) {
+          cb(reason);
+        }
+      });
+    };
+
+    try {
+      executor(resolve, reject);
+    } catch (err) {
+      reject(err);
+    }
+  }
+
+  then(
+    onFulfilled = (value) => value,
+    onRejected = (err) => throw err,
+  ) {
+    // highlight-start
+    // 链式调用解析
+    const resolvePromiseByResult = (result, resolve, reject) => {
+      if (result instanceof _Promise) {
+        result.then(resolve, reject);
+      } else {
+        resolve(result);
+      }
+    };
+    // highlight-end
+
+    if (this.#state === State.fulfilled) {
+      return new _Promise((resolve, reject) => {
+        const prevResult = onFulfilled(this.#result);
+
+        resolvePromiseByResult(prevResult, resolve, reject);
+      });
+    }
+
+    if (this.#state === State.rejected) {
+      return new Promise((resolve, reject) => {
+        const prevResult = onRejected?.(this.#result);
+
+        resolvePromiseByResult(prevResult, resolve, reject);
+      });
+    }
+
+    if (this.#state === State.pending) {
+      return new _Promise((resolve, reject) => {
+        this.#onRejectedCallbacks.push((value) => {
+          onFulfilled(value);
+          resolvePromiseByResult(value, resolve, reject);
+        });
+
+        this.#rejectCallbacks.push((reason) => {
+          onRejected?.(reason);
+          resolvePromiseByResult(reason, resolve, reject);
+        });
+      });
+    }
+  }
+
+  // 以 then 为基础实现
+  catch(onRejected) {
+    return this.then(undefined, onRejected);
+  }
+
+  // 以 then 为基础实现
+  finally(onFinally) {
+    return this.then(
+      (value) => {
+        onFinally();
+        return value;
+      },
+      (reason) => {
+        onFinally();
+        return reason;
+      },
+    );
+  }
+
+  static resolve(value) {
+    return new _Promise(resolve => resolve(value));
+  }
+
+  static reject(reason) {
+    return new _Promise((_, reject) => reject(reason));
+  }
+
+  static all(promiseList) {
+    return new Promise((resolve, reject) => {
+      const result = [];
+
+      for (let promiseItem of promiseList) {
+        if (promiseItem instanceof _Promise) {
+          promiseItem.then(
+            res => result.push(res),
+            err => reject(err),
+          );
+        } else {
+          result.push(promiseItem);
+        }
+      }
+
+      resolve(result);
+    });
+  }
+
+  static race(promiseList) {
+    return new Promise((resolve, reject) => {
+      for (let promiseItem of promiseList) {
+        if (!(promiseItem instanceof _Promise)) {
+          resolve(promiseItem);
+          return;
+        }
+        promiseItem.then(resolve, reject);
+      }
+    });
+  }
+
+  static any(promiseList) {
+    return new Promise((resolve, reject) => {
+      const result = [];
+
+      for (let promiseItem of promiseList) {
+        if (promiseItem instanceof _Promise) {
+          promiseItem.then(
+            res => resolve(res),
+            err => result.push(err),
+          );
+        } else {
+          resolve(promiseItem);
+        }
+      }
+
+      reject(result);
+    });
+  }
+
+  static allSettled(promiseList) {
+    return new Promise((resolve, reject) => {
+      const result = [];
+
+      for (let promiseItem of promiseList) {
+        if (promiseItem instanceof _Promise) {
+          promiseItem.then(
+            res => result.push({ status: 'fulfilled', value: res }),
+            err => result.push({ status: 'rejected', reason: err }),
+          );
+        } else {
+          result.push({ status: 'fulfilled', value: promiseItem });
+        }
+      }
+
+      resolve(result);
+    });
+  }
+
+  [Symbol.toStringTag]() {
+    return '_Promise';
+  }
+}
+```

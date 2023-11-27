@@ -1,0 +1,25 @@
+---
+sidebar_position: 1
+---
+
+`typeof` 运算符返回一个字符串，表示操作数的类型。
+
+返回的字符串：原始类型 + function + object
+
+```javascript title="手写 typeof"
+function _typeof(params) {
+  const type = Object.prototype.toString.call(params).slice(8, -1).toLowerCase();
+
+  const results = [
+    'undefined',
+    'number',
+    'bigint',
+    'string',
+    'boolean',
+    'symbol',
+    'function',
+  ];
+
+  return results.includes(type) ? type : 'object';
+}
+```

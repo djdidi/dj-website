@@ -1,0 +1,20 @@
+---
+sidebar_position: 2
+---
+
+沿原型链查找，判断对象的 `__proto__` 属性 与 构造函数 `prototype` 属性。
+
+```javascript title="实现 instanceof 操作符"
+function _instanceof(object, Constructor) {
+  let p = object;
+
+  while (p) {
+    if (Reflect.getPrototypeOf(p) === Constructor.prototype) {
+      return true;
+    }
+    p = Reflect.getPrototypeOf(p);
+  }
+
+  return false;
+}
+```
