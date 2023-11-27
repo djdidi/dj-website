@@ -173,42 +173,13 @@ class _Promise {
     });
   }
 
+  // 和 all/race 差不多，具体业务逻辑不同而已
   static any(promiseList) {
-    return new Promise((resolve, reject) => {
-      const result = [];
-
-      for (let promiseItem of promiseList) {
-        if (promiseItem instanceof _Promise) {
-          promiseItem.then(
-            res => resolve(res),
-            err => result.push(err),
-          );
-        } else {
-          resolve(promiseItem);
-        }
-      }
-
-      reject(result);
-    });
+    /* noop */
   }
 
   static allSettled(promiseList) {
-    return new Promise((resolve, reject) => {
-      const result = [];
-
-      for (let promiseItem of promiseList) {
-        if (promiseItem instanceof _Promise) {
-          promiseItem.then(
-            res => result.push({ status: 'fulfilled', value: res }),
-            err => result.push({ status: 'rejected', reason: err }),
-          );
-        } else {
-          result.push({ status: 'fulfilled', value: promiseItem });
-        }
-      }
-
-      resolve(result);
-    });
+    /* noop */
   }
 
   [Symbol.toStringTag]() {
