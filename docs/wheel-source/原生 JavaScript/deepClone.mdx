@@ -1,0 +1,96 @@
+---
+sidebar_position: 7
+---
+
+## 浅拷贝
+
+**是什么？**
+
+对象的浅拷贝是其属性与拷贝源对象的属性共享相同引用（指向相同的底层值）的副本。
+
+- Object.assign
+- 展开语法
+- 一些内置方法
+
+## 深拷贝
+
+### 定义
+
+**是什么？**
+
+对象的深拷贝是指其属性与其拷贝的源对象的属性不共享相同的引用（指向相同的底层值）的副本。
+
+**什么对象能深拷贝？**
+
+如果一个 JavaScript 对象可以被序列化(Serialization)，则存在一种创建深拷贝的方式。
+
+> 序列化是将一个对象或数据结构转换为适合网络传输或存储的格式（如数组缓冲区或文件格式）的过程。
+
+许多 javascript 对象不能序列化，如函数、symbol、表示dom元素的对象等等
+
+
+### 实现
+
+可序列化的对象如何深拷贝。
+
+**原生支持**
+
+ES10 新API structuredClone() 使用[结构化克隆算法](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Workers_API/Structured_clone_algorithm)
+
+https://developer.mozilla.org/zh-CN/docs/Web/API/structuredClone
+
+**手写实现**
+
+```javascript title="deepClone-简易版本"
+function _deepClone(target) {
+  if (typeof target === 'object') {
+    const cloneTarget = Array.isArray(target) ? [] : {};
+
+    for (const key in target) {
+      if (Object.hasOwn(target, key)) {
+        cloneTarget[key] = _deepClone(target[key]);
+      }
+    }
+
+    return cloneTarget;
+  }
+
+  return target;
+}
+```
+
+但是遇到循环引用会有问题 `RangeError: Maximum call stack size exceeded`
+
+额外存一下遍历过的地址就好（weakMap?）
+
+```diff title="deepClone-解决循环引用"
+function _deepClone(target, map = new Map()) {
+  if (typeof target === 'object') {
+    const cloneTarget = Array.isArray(target) ? [] : {};
+
++    if (map.get(target)) {
++      return map.get(target);
++    }
+
++    map.set(target, cloneTarget);
+
+    for (const key in target) {
+      if (Object.hasOwn(target, key)) {
+        cloneTarget[key] = _deepClone(target[key], map);
+      }
+    }
+
+    return cloneTarget;
+  }
+
+  return target;
+}
+```
+
+之前提到“可序列化”的对象都可以被深拷贝，理论上在 ***结构化克隆算法*** 中明确列出支持的类型，也都可以实现。
+
+**类型的获取**
+
+可以通过 `Object.prototype.toString.call(obj)` 获取 `[Symbol.toStringTag]` 结果
+
+通过判断不同的数据类型，去定制拷贝逻辑。

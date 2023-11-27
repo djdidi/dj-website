@@ -1,3 +1,7 @@
+---
+sidebar_position: 6
+---
+
 ## 简易版本
 
 - yield 后跟 promise
@@ -121,7 +125,7 @@ function toPromise(obj) {
   if (!obj) return obj;
   if (isPromise(obj)) return obj;
   if (isGeneratorFunction(obj) || isGenerator(obj)) return co.call(this, obj);
-  // 关于 thunk 函数，可以看阮一峰这篇介绍 https://www.ruanyifeng.com/blog/2015/05/thunk.html
+  // 关于 thunk 函数，看阮一峰这篇介绍 https://www.ruanyifeng.com/blog/2015/05/thunk.html
   if ('function' == typeof obj) return thunkToPromise.call(this, obj);
   if (Array.isArray(obj)) return arrayToPromise.call(this, obj);
   if (isObject(obj)) return objectToPromise.call(this, obj);
@@ -131,37 +135,18 @@ function toPromise(obj) {
 /**
  * 辅助工具类 不关心实现
  */
+function thunkToPromise(fn) {}
 
-/**
-*
-* @param fn
-*/
-function thunkToPromise(fn) {
-  /* noop */
-}
+function arrayToPromise(obj) {}
 
-function arrayToPromise(obj) {
-  /* noop */
-}
+function objectToPromise(obj) {}
 
-function objectToPromise(obj) {
-  /* noop */
-}
+function isPromise(obj) {}
 
-function isPromise(obj) {
-  /* noop */
-}
+function isGenerator(obj) {}
 
-function isGenerator(obj) {
-  /* noop */
-}
+function isGeneratorFunction(obj) {}
 
-function isGeneratorFunction(obj) {
-  /* noop */
-}
-
-function isObject(val) {
-  /* noop */
-}
+function isObject(val) {}
 ```
 
