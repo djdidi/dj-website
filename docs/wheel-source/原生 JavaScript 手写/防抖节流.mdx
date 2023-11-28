@@ -1,0 +1,45 @@
+---
+sidebar_position: 8
+---
+
+# 防抖/节流
+
+都是优化高频率代码执行的方式
+
+## 防抖 debounce
+
+事件触发，等待x秒后再执行回调，如果x秒内再次触发，则重新等待。
+
+```javascript title="debounce"
+function debounce(fn, delay) {
+  let timer = null;
+
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+```
+
+## 节流 throttle
+
+以固定频率触发，像流水一样。
+
+```javascript title="throttle"
+function throttle(fn, delay = 500) {
+  let timer = null;
+
+  return (...args) => {
+    if (timer) {
+      return;
+    }
+
+    timer = setTimeout(() => {
+      fn(...args);
+      timer = null;
+    }, delay);
+  };
+}
+```
+
+

@@ -7,8 +7,6 @@ slug: css-base
 
 CSS基础知识回顾
 
-> 通过阅读mdn web docs快速回顾，概括记录要点
-
 ## 定义
 
 CSS （Cascading Style Sheets，层叠样式表）是用来控制网页在浏览器中的显示外观的声明式语言。

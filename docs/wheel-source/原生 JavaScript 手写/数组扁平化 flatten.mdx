@@ -1,0 +1,40 @@
+---
+sidebar_position: 9
+---
+
+数组扁平化指的是将超过一维的数组转化为只有一维的数组。
+
+根据指定深度递归地将所有子数组元素拼接到新的数组。
+
+```javascript title="递归实现"
+function _flat(arr, output = []) {
+  for (let item of arr) {
+    if (Array.isArray(item)) {
+      _flat(item, output);
+    } else {
+      output.push(item);
+    }
+  }
+
+  return output;
+}
+```
+
+对于数组中每个元素都要处理，最终“缩减”成一个输出，都可以使用 reduce 实现。
+
+```javascript title="reduce实现"
+function _flat(arr) {
+  return arr.reduce((output, curVal, index) => {
+    if (Array.isArray(curVal)) {
+      output.push(..._flat(curVal));
+      return output;
+    } else {
+      output.push(curVal);
+      return output;
+    }
+  }, []);
+}
+
+// 精简一下
+const _flat = (arr) => arr.reduce((output, curVal, index) => Array.isArray(curVal) ? [...output, ..._flat(curVal)] : [...output, curVal], []);
+```

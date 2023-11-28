@@ -1,10 +1,6 @@
 {
   "label": "JavaScript",
   "position": 3,
-  "collapsible": false,
-  "collapsed": false,
-  "link": {
-    "type": "generated-index",
-    "description": "JavaScript 相关知识整理"
-  }
+  "collapsible": true,
+  "collapsed": true
 }

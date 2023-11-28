@@ -6,8 +6,6 @@ sidebar_position: 1
 
 HTML基础知识回顾
 
-> 通过阅读mdn web docs快速回顾，概括记录要点
-
 ## 定义
 
 HTML（HyperText Markup Language，超文本标记语言）是一种描述语言，用来定义网页结构。

@@ -1,0 +1,56 @@
+---
+sidebar_position: 10
+---
+
+## 定义
+
+> **在数学和计算机科学中，柯里化是一种将带有多个参数的函数的求值转换为求值一系列函数的技术。 --- 维基百科**
+
+
+```text title="示例"
+let x = f(a, b, c)
+
+let h = g(a)
+let i = h(b)
+let x = i(c)
+
+// or
+
+let x = g(a)(b)(c)
+```
+
+**主要目的**
+
+减少重复传递不变的部分参数
+
+## 手写实现
+
+```javascript title="javascript"
+function currying(fn) {
+  /**
+   * 返回一个柯里化函数，新函数行为根据参数个数决定
+   * - 参数不够，返回新函数，继续接收参数
+   * - 参数够了，调用原函数
+   */
+  const curriedFn = (...args) => {
+    if (args.length < fn.length) {
+      return (...nextArgs) => curriedFn(...args, ...nextArgs);
+    }
+
+    return fn(...args);
+  };
+
+  return curriedFn;
+}
+
+// test case
+const sum = (a, b, c) => a + b + c;
+const curriedSum = currying(sum);
+
+const case1 = curriedSum(1, 2, 3);
+const case2 = curriedSum(1, 2)(3);
+const case3 = curriedSum(1)(2, 3);
+const case4 = curriedSum(1)(2)(3);
+
+console.log(case1, case2, case3, case4); // 6 6 6 6
+```
