@@ -6,8 +6,8 @@ sidebar_position: 0
 
 ---
 
-:::info
+:::info Tips
 
-偏理论大纲，具体查文档
+📖 理论大纲为主，具体查文档就好。
 
 :::

@@ -54,13 +54,13 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'frontendBase',
+          sidebarId: 'noteSidebar',
           label: 'Note',
           position: 'left',
         },
         {
           type: 'docSidebar',
-          sidebarId: 'wheelSource',
+          sidebarId: 'codeSidebar',
           label: 'Code',
           position: 'left',
         },
