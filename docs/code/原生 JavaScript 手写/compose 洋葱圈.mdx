@@ -1,0 +1,63 @@
+---
+sidebar_position: 12
+---
+
+## 🧅koa-compose 核心实现
+
+[https://github.com/koajs/compose 源码](https://github.com/koajs/compose)
+
+去除了一些源码中校验逻辑，只保留核心逻辑分析。
+
+```typescript title="koa-compose 核心源码"
+/**
+ * middlewares 是什么？
+ * - app.use push middlewares
+ * - callback = compose(middlewares)
+ *
+ * compose 作用？
+ * - 把这个中间件数组合并成一个大的中间件函数，像洋葱圈 🧅 一样调用
+ * - 中间件函数的调用时机由 next 决定：中间件函数接收 next 参数，决定下一个函数执行，next() 执行完，当前函数继续跑。
+ */
+function compose(middlewares: Function[]) {
+
+  // 返回整合后的函数
+  return function (context: any, next: Function) {
+    let index = -1;
+
+    // 执行第一个中间件函数
+    return dispatch(0);
+
+    function dispatch(i: number) {
+      if (i <= index) return Promise.reject(new Error('next() called multiple times'));
+
+      index = i;
+      // 当前中间件函数
+      let fn = middlewares[i];
+
+      /**
+      * 在最后一个中间件函数调用 next() 会命中下面
+      * TODO:
+      * - ❓❓❓这个 next 是与 ctx 同时传入的，到洋葱心时通知下外面？ 应该叫 onReachOnionInnerCallback?
+      * - 不知道干啥用，koa 本身也没用，只传了 ctx 参数。
+      */
+      if (i === middlewares.length) fn = next;
+      // 递归结束条件(洋葱心❤️)，由内向外执行 next() 之后的部分
+      if (!fn) return Promise.resolve();
+
+      try {
+        /**
+        * 1.调用当前中间件函数 fn
+        * 2.调用 next() === 调用 dispatch()（下一个中间件的执行权，在上一个中间件手中）
+        */
+        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
+  };
+}
+```
+
+---
+
+![koa-compose](https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/koa-componse.png)

@@ -1,0 +1,26 @@
+---
+sidebar_position: 11
+---
+
+防止 setInterval 回调堆积
+
+> 考察引出 Event Loop 吧，感觉没啥用。暂时没见过 delay 时间到了任务还没跑完的 case。
+
+```javascript title="javascript"
+function _setInterval(fn, delay) {
+  let timer = null;
+
+  const _interval = () => {
+    timer = setTimeout(() => {
+      fn();
+      _interval();
+    }, delay);
+  };
+
+  timer = setTimeout(_interval, delay);
+
+  return () => {
+    clearTimeout(timer);
+  };
+}
+```
