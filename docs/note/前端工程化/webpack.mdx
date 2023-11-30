@@ -1,3 +1,232 @@
 ---
 sidebar_position: 2
 ---
+
+## 基础
+
+> 本质上，webpack 是一个用于现代 JavaScript 应用程序的 静态模块打包工具。
+>
+> 当 webpack 处理应用程序时，它会在内部从一个或多个入口点构建一个依赖图，然后将你项目中所需的每一个模块组合成一个或多个 bundles，它们均为静态资源，用于展示你的内容。
+
+### webpack 配置项
+
+Webpack 原生提供了上百种配置项，这些配置最终都会作用于 Webpack 打包过程的不同阶段。
+
+- 流程类
+- 工具类
+
+打包流程大致为
+
+- 输入输出
+  + entry、context、output...
+- 模块处理：module 转 AST，递归处理模块
+  + resolve、module、externals...
+- 后处理：模块合并、产物优化等等
+  + optimization、target...
+
+工具类在主流程之外提供额外的工程化能力，工具相关大致为
+
+- 开发效率
+  + devtool、devServer...
+- 性能优化
+  + performance、cache...
+- ...
+
+### 相关概念
+
+- loader：loader 用于对模块的源代码进行转换。
+- plugin：插件目的在于解决 loader 无法实现的其他事，包括：打包优化，资源管理，注入环境变量等等。
+- 依赖图(dependency graph)：从入口开始，webpack 会递归的构建一个 依赖关系图，包含着应用程序中所需的每个模块。
+- 模块(modules)：开发者将程序分解为功能离散的 chunk，并称之为模块。
+
+## 性能优化
+
+### 性能分析
+
+- 分析模块占比 [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer)
+- 分析打包速度 [speed-measure-webpack-plugin](https://www.npmjs.com/package/speed-measure-webpack-plugin)
+- ...
+
+
+### 持久化缓存
+
+webpack5 提供了 cache 相关配置，缓存生成的 webpack 模块和 chunk，来改善构建速度。
+
+:::info 缓存原理
+webpack 在构建和生成阶段有许多CPU密集型的操作，Webpack5 的持久化缓存功能则将构建结果保存到文件系统中，在下次编译时对比每一个文件的内容哈希或时间戳，从而跳过执行 Loader 链、解析 AST、解析依赖等耗时操作，提升编译性能。
+:::
+
+### 并行操作
+
+- 一些 loader parallel 配置
+- Thread-loader
+
+### 代码分割
+
+- SplitChunksPlugin 共享模块分割，按需加载
+
+### Tree-Shaking
+
+用于描述移除 JavaScript 上下文中的未引用代码(dead-code)，它依赖于es module的静态模块结构特性。
+
+大致经过*收集模块、标记模块、生产/删除代码*几个阶段。
+
+:::note 静态模块结构
+[16.8.2 Static module structure](https://exploringjs.com/es6/ch_modules.html#static-module-structure)
+
+ESM 下模块之间的依赖关系是高度确定的，与运行状态无关，编译工具只需要对 ESM 模块做静态分析，就可以从代码字面量中推断出模块依赖关系。
+
+这是实现 Tree Shaking 技术的必要条件
+:::
+
+### 代码压缩
+
+- terser-webpack-plugin
+- css-minimizer-webpack-plugin
+- gzip (标准 http 压缩格式的一种)
+- ...
+
+### 生产环境依赖
+
+- externals 外部依赖
+- 利用 HTTP 缓存
+- 动态加载
+- ...
+
+## loader 基本原理
+
+### loader 是什么
+
+- 一个 javascript 模块，导出一个函数。
+- 主要负责将资源内容翻译成 Webpack 能够理解、处理的 JavaScript 代码。
+
+**为什么要有 loader**
+
+Webpack 内部只实现了标准代码解析/处理能力，由第三方开发者以 Loader 方式补充对特定资源的解析逻辑。
+
+**函数签名**
+
+```javascript title="javascript"
+/**
+ *
+ * @param {string|Buffer} content 源文件的内容
+ * @param {object} [map] 可以被 https://github.com/mozilla/source-map 使用的 SourceMap 数据
+ * @param {any} [meta] meta 数据，可以是任何内容
+ */
+function webpackLoader(content, map, meta) {
+  return content
+}
+```
+
+### loader 执行过程
+
+**主要过程**
+
+1. loader runner 会调用此函数，然后将上一个 loader 产生的结果或者资源文件传入进去
+2. 函数中的 this 作为上下文会被 webpack 填充
+3. pitch 阶段 挂载在 loader 函数上的方法，主要用于阻断 loader 链，从左向右调用
+4. 引入文件内容
+5. loader 正常处理阶段 总是从右到左链式调用
+6. 最终返回给 webpack 解析
+
+**调用方式**
+
+1. 同步调用 直接返回处理结果，复杂结果通过 `this.callback` 返回
+2. 异步调用 `this.async()` 获取 回调函数
+
+**常见的 css 链式处理**
+
+- less-loader ：将 less 规格的内容转换为标准 css；
+- css-loader ：将 css 内容包裹为 JavaScript 模块；
+- style-loader ：将 JavaScript 模块的导出结果以 link 、style 标签等方式挂载到 html 中。
+
+**style-loader 中 pitch 的应用**
+
+`css-loader` 返回 source 是一个 js 脚本字符串，我们需要执行这个 js 脚本才能获取样式内容。
+
+放在 pitch 阶段处理更加优雅，可以把执行 `css-loader` 返回的 js 脚本交给 webpack 执行，直接拿到 css 样式内容。
+
+***大致流程：***
+
+- style-loader pitch 直接返回，中断流程
+- 解析 pitch 的返回，发现Inline matchResource，处理需要进一步使用 loader
+- 调用 css-loader，返回的脚本交给 webpack 去执行
+- style-loader 直接拿到返回的样式内容，追加到 style 标签
+
+:::info pitch 应用
+如果在 loader 开发中，需要依赖其他 loader，但此时上一个 loader 的函数返回的并不是处理后的资源文件内容而是一段js脚本
+
+那么将 loader 逻辑设计在 pitch阶段，结合 `Inline matchResource`处理，无疑是一种更好的方式。
+:::
+
+### loader 上下文接口
+
+loader context 表示在 loader 内使用 this 可以访问的一些方法或属性。
+
+影响 Webpack 编译过程，产生内容转换之外的副作用。
+
+### loader 开发的健壮性
+
+- scheme-utils 校验配置项
+- 日志接口获取 `this.getLogger` 复用 webpack  infrastructureLogging
+- 错误处理 `this.emitError`
+- 单元测试，可以 node 环境使用 webpack 接口
+
+
+## plugin 基本原理
+
+### plugin 是什么
+
+插件向第三方开发者提供了 webpack 引擎中完整的能力。
+
+Webpack 插件在代码形态上是一个带 apply 方法的对象，我们可以在 apply 函数中注册各式各样的 Hook 回调，监听对应事件，之后在回调中修改上下文状态，达到干预 Webpack 构建逻辑的效果。
+
+### plugin 实现机制
+
+**tapable 与 hooks 体系**
+
+webpack 插件机制 基于 tapable，可以发布订阅事件，类似 EventEmitter，不太一样的是这里强耦合了上下文。
+
+- 编译各阶段以 hooks 形式，通知插件此刻在做什么
+- tapable 触发参数传递上下文
+- context 中附带很多交互接口，通过此改变逻辑，影响运行结果
+
+## webpack 流程概述
+
+简单理解为三个阶段：
+
+- 初始化 init
+  + 设置构建环境
+  + 初始化若干工厂类，如创建 Compiler、Compilation 等基础对象；
+  + 初始化注入内置插件
+- 构建 make
+  + 调用 loader 将模块转译为 JavaScript 代码
+  + 代码转换为 AST
+  + 递归解析模块内容、找出模块依赖
+  + 逐步构建出项目整体 module 集合以及 module 之间的 依赖关系图
+- 封装生成 seal
+  + 将 Module 封装进不同 Chunk 对象
+  + 经过优化等操作，再将模块代码翻译成产物形态
+  + 按 Chunk 合并成最终产物文件
+
+## Hot Module Replacement
+
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/webpack-hmr.png' width='700' />
+
+## SourceMap
+
+**是什么**
+
+[Sourcemap 协议](https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit#heading=h.1ce2c87bpj24)由 Google 设计实现，它的主要作用就是将经过压缩、混淆、合并的产物代码还原回未打包的原始形态，帮助开发者在生产环境中精确定位问题发生的行列位置。
+
+一般在源文件尾部标识出 sourcemap 文件，浏览器会对应解析，可以 F12 启动/关闭 设置。
+
+```text "示例"
+//@ sourceMappingURL=/path/to/file.js.map
+```
+
+---
+
+:::note 相关链接
+[掘金小册《Webpack5 核心原理与应用实践》](https://juejin.cn/book/7115598540721618944)
+:::

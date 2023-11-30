@@ -1,0 +1,132 @@
+:::info 相关链接
+提交信息参考：[约定式提交 conventional commits](https://www.conventionalcommits.org/)
+
+分支参考：[a-successful-git-branching-model](https://nvie.com/posts/a-successful-git-branching-model/)
+:::
+
+:::note
+早期笔记
+:::
+
+## 基本命令
+
+克隆仓库
+
+```bash
+git clone 远程仓库地址
+```
+
+查看当前状态
+
+```bash
+git status
+```
+
+查看修改了哪些
+
+```bash
+git diff (文件名)
+```
+
+提交文件
+
+```bash
+git add 文件名
+git add . # 全部提交
+```
+
+提交生成记录
+
+```bash
+git commit -m "本次提交说明"
+```
+
+查看提交日志
+
+```bash
+git log
+```
+
+查看某次提交的详情
+
+```bash
+git show (ID)
+```
+
+检出某次提交
+
+```bash
+git checkout 文件名
+git checkout .
+```
+
+提交分支到远程仓库
+
+```bash
+git push origin master
+```
+
+从远程获取代码并合并本地
+
+```bash
+git pull
+```
+
+
+
+## 分支操作
+
+查看当前分支
+
+```bash
+git branch
+```
+
+列出所有分支名称
+
+```bash
+git branch -a
+```
+
+创建分支
+
+```bash
+git branch mybranch
+```
+
+切换分支
+
+```bash
+git checkout mybranch
+```
+
+创建并切换分支
+
+```bash
+git checkout -b mybranch
+```
+
+作用是checkout远程的dev分支，在本地起名为dev分支，并切换到本地的dev分支
+
+```bash
+git checkout -b dev origin/dev
+```
+
+提交某个分支到服务端
+
+```bash
+git push origin 分支名称
+```
+
+拉下服务端所有分支
+
+```bash
+git fetch
+```
+
+合并某个分支到当前分支
+
+```bash
+git marge 分支名
+```
+
