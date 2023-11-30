@@ -4,3 +4,61 @@ sidebar_position: 99
 ---
 
 # CI/CD
+
+## 基本概念
+
+### DevOps
+
+DevOps（Development和Operations的组合词）是一组过程、方法与系统的统称，用于促进开发（应用程序/软件工程）、技术运营和质量保障（QA）部门之间的沟通、协作与整合。
+
+:::info
+DevOps 强调的是高效组织团队之间如何通过自动化的工具协作和沟通来完成软件的生命周期管理，从而更快、更频繁地交付更稳定的软件。
+:::
+
+### CI
+
+CI(Continuous Integration) 持续集成，可以帮助开发人员更加频繁地（有时甚至每天）将代码更改合并到共享分支或“主干”中。
+
+理想情况下，自动构建工具每次都会验证签入或分支，以确保没有错误并且已准备好投入生产。主要优势是通常会早期发现问题，避免累积成更大的问题。
+
+### CD
+
+CD(Continuous Deployment/Delivery) 持续部署/交付，更新后自动把已验证的代码发布到生产环境。
+
+## CI(持续集成)
+
+市面上一些 CI 工具
+
+- Jenkins
+- Github Actions
+- travis-ci
+- 云服务 (AWS/Azure pipeline、腾讯云 Coding、阿里云云效...)
+- ...
+
+### pipeline 配置
+
+主要有两种，个人比较喜欢写 yaml
+
+- pipeline as code
+- 可视化 UI
+
+
+### 主要应用
+
+- 规范检查
+- 单元测试
+- 自动化发布流程
+- 联动机器人webhook通知
+- ...
+
+### 其他
+
+**密钥的维护**
+
+- 集成在 pipeline 平台中
+- git 私有仓库
+- 配置中心平台
+- ...
+
+
+
