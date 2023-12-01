@@ -13,7 +13,7 @@
 
 RFID 射频识别(Radio Frequency Identification) 是一种基础技术，它允许启用 RFID 的标签和设备通过电磁场与其他启用 RFID 的设备进行通信。旨在用于小型通信会话和低数据传输；通常只是存储在内存中的唯一标识符或少量数据。
 
-在 NFC 中使用的技术是基于**射频识别（RFID ）**演变而来，即使用电磁感应来传输信息，并向下兼容 RFID。但是，NFC 可以做的不仅仅是向目标读取或写入数据。
+在 NFC 中使用的技术是基于<b>射频识别(RFID)</b>演变而来，即使用电磁感应来传输信息，并向下兼容 RFID。但是，NFC 可以做的不仅仅是向目标读取或写入数据。
 
 在 RFID 和 NFC 之间，最大的区别在于 NFC 目标通常是可编程设备，例如手机。这意味着，NFC 目标不仅可以从内存中传递静态数据，还可以**为每次交换生成独特的内容并将其传递回发起方**。
 
@@ -57,11 +57,12 @@ NFC 论坛定义了几种操作模式，目前最常见的是卡仿真模式。
 
 NFC标签有各种各样的形状和尺寸，最简单的通常是以方形或圆形贴纸的形式制造，这类标签的结构极其简单：由一个细铜线圈和一个微芯片上的小存储空间组成。
 
-![image-20220830180855872.png](https://km.woa.com/asset/ccf951b3781343ed80baadb2ea53db1d?height=574&width=1052)
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-tags.png' width={700} />
 
 有源NFC元件可以在无源元件中感应出电流和发送数据。这意味着无源设备不需要自己的电源，当NFC组件进入通信范围时，它们可以由有源NFC组件产生的电磁场提供动力。
 线圈允许标签**通过电磁感应的过程**以无线方式从 NFC 阅读器接收电力。本质上，每当你把有电的NFC读取器靠近标签时，后者就会通电，并将其微芯片内的存储数据传输给设备。
-![image-20220830172736206.png](https://km.woa.com/asset/5d44243ca8874711a5f4e0272178d606?height=844&width=1140)
+
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-device.png' width={700} />
 
 ## NFC标签
 
@@ -69,7 +70,7 @@ NFC 标签是一个通用术语，用于描述所有实现NFC功能的物理标�
 
 ### NFC标准/标签类型
 
-这些标准定义了从物理层到通信、数据格式化和应用层的技术工作交互。**这些标准确保了来自不同制造商的NFC 标签、NFC 设备和NFC 软件可以互操作。**大多数标准由 [ISO](https://www.iso.org/home.html) 和 [NFC论坛](https://nfc-forum.org/) 管理。
+这些标准定义了从物理层到通信、数据格式化和应用层的技术工作交互。**这些标准确保了来自不同制造商的NFC 标签、NFC 设备和NFC 软件可以互操作**。大多数标准由 [ISO](https://www.iso.org/home.html) 和 [NFC论坛](https://nfc-forum.org/) 管理。
 
 ISO 定义了几个适用于 NFC芯片和设备的标准：
 
@@ -90,7 +91,8 @@ NFC 论坛定义了与 NFC 标签、设备和软件相关的各种重要标准�
 ### NFC架构
 
 最底层是物理层，即您的 CPU 和进行通信的无线电。中间是数据打包和传输层，然后是数据格式层，最后是您的应用程序代码。
-![image-20220830193130378.png](https://km.woa.com/asset/ba84bf3b40f1466e9ef7a39734e5845c?height=850&width=1374)
+
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-framework.png' width={800} />
 
 ## NFC 数据交换格式 (NDEF)
 
@@ -107,23 +109,27 @@ NDEF 是NFC 论坛制定的标准化数据格式规范，用于描述如何将�
 
 由于此存储位置是 OTP，因此格式化 NFC 标签的过程是永久性操作。一些 NFC 芯片类型，采用 pre-NDEF 格式，因此它们能存储 NDEF 数据；其他 NFC 芯片类型不是 pre-NDEF 格式化但也可用，称为“NDEF Formattable”。（可经过格式化存储NDEF）
 
-#### 格式化示例
+<details>
+  <summary>**NDEF格式化示例**</summary>
 
-合作厂商A提到，通过nfcA 向固定内存写入scheme，同样可以拉起小程序。
-**分析其写入数据如下：**
-![image-20220831103419518.png](https://km.woa.com/asset/4422480ce0a745b698bcfed8f178ad16?height=3556&width=1894)
+  合作厂商A提到，通过nfcA 向固定内存写入scheme，同样可以拉起小程序。
+
+  分析其写入数据如下：
+
+  <img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndefdemo.png' width={700} />
+</details>
 
 ### NDEF结构
 
 NDEF 是一个以消息为结构的二进制格式，每条消息可以包含多条记录，如图所示。每条记录都由一个header组成，其中包含有关记录的元数据，例如记录类型、长度等，以及payload，其中包含消息的内容。
 
-**一个NDEF记录包含数据的payload和描述如何解释payload的元数据。**每个记录的payload可以是几种不同数据类型中的一种。每个记录的标头包含描述记录及其在消息中的位置的元数据，然后是其类型和 ID。在标头之后是有效负载。
+**一个NDEF记录包含数据的payload和描述如何解释payload的元数据**。每个记录的payload可以是几种不同数据类型中的一种。每个记录的标头包含描述记录及其在消息中的位置的元数据，然后是其类型和 ID。在标头之后是有效负载。
 
-![image-20220830200609305.png](https://km.woa.com/asset/a2d1971bf12741b8b27600c6dd725719?height=338&width=1306)
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndef-1.png' />
 
-下图为NDEF记录的的位和字节的全貌：
+**下图为NDEF记录的的位和字节的全貌**：
 
-![image-20220830201123159.png](https://km.woa.com/asset/d1cc3077ab3c4f0981fc723695f9b6f8?height=610&width=1388)
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndef-2.png' />
 
 ### TNF(Type Name Format)
 
@@ -170,7 +176,7 @@ RFC 3986 中定义的 URI。
 
 **NDEF 记录类型定义 (RTD Record Type Definition)** 规范描述了 TNF=Well-Known 的Record Type并设置了创建外部类型的规则。
 
-![image-20220830203402507.png](https://km.woa.com/asset/a499b104eb58450c8a36ff95b8ed8e1a?height=906&width=604)
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndef-recordtype.png' width={300} />
 
 ### NDEF中的URI
 
@@ -178,9 +184,11 @@ NDEF 规范提供了一个带有 URI 标识符代码的 URI 记录类型定义�
 
 **为了添加 UIC，您需要将 URI 字符串转换为字节数组并将 UIC 推到它的开头。**
 
-![image-20220830204549849.png](https://km.woa.com/asset/9c5dffb497dd4e9ea0ead109791b6b93?height=1760&width=1350)
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndef-uri.png' width={700} />
 
-![image-20220830210224384.png](https://km.woa.com/asset/724ffcef613948d5bb5e2ba8b35883fe?height=882&width=1512)
+---
+
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndef-uri2.png' width={700} />
 
 ### 载荷标识 Payload Identifier
 
@@ -239,7 +247,7 @@ NDEF 记录是可变长度的数据结构。记录头包含读取数据所需的
 
 - Payload ID：位于Payload Type之后。此可变长度字段由 ID Length 字节确定。
 
-![image-20220830201123159.png](https://km.woa.com/asset/92fbad9ab7d64755a73866a139e72570?height=610&width=1388)
+<img src='https://djcdn-1257815770.cos.ap-guangzhou.myqcloud.com/nfc/nfc-ndef-2.png' width={700} />
 
 ## NFC 的应用
 
