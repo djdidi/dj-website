@@ -1,0 +1,270 @@
+:::info 摘要
+**学习总结，之前内部分享文章脱敏搬运。**
+
+🔥上热门了嘿嘿
+<img src={'/img/nfc-km.png'} />
+:::
+
+## NFC是什么
+
+**近场通信 (NFC Near-field communication)** 是一种基于RFID的标签技术，它允许 NFC 设备与 NFC 标签和其他 NFC 设备近距离通信，多用于互联物联网项目。
+
+### NFC与RFID
+
+RFID 射频识别(Radio Frequency Identification) 是一种基础技术，它允许启用 RFID 的标签和设备通过电磁场与其他启用 RFID 的设备进行通信。旨在用于小型通信会话和低数据传输；通常只是存储在内存中的唯一标识符或少量数据。
+
+在 NFC 中使用的技术是基于**射频识别（RFID ）**演变而来，即使用电磁感应来传输信息，并向下兼容 RFID。但是，NFC 可以做的不仅仅是向目标读取或写入数据。
+
+在 RFID 和 NFC 之间，最大的区别在于 NFC 目标通常是可编程设备，例如手机。这意味着，NFC 目标不仅可以从内存中传递静态数据，还可以**为每次交换生成独特的内容并将其传递回发起方**。
+
+### 通信模式
+
+NFC 设备有**两种通信模式**。
+
+如果发起者始终提供射频能量，而目标由发起者的场供电，则称它们处于**被动**通信模式。
+
+如果目标和发起者都有自己的能量来源，则它们处于**主动**通信模式。
+
+### 操作模式
+
+NFC 论坛定义了几种操作模式，目前最常见的是卡仿真模式。
+
+
+- 卡模拟模式（Card Emulation mode）
+这允许手机或可穿戴设备等设备模拟非接触式卡并连接到现有的支付框架。服务提供商不需要知道它正在与智能设备连接，只需知道它“看起来”像一张卡。
+类似于非接触式卡，能够与非接触式读取器设备进行通信。典型的用例是模拟用于支付的银行卡或模拟用于公共交通的车票。
+
+
+- 读/写模式（Reader / Writer mode）
+移动应用程序开发人员可以设计自定义应用程序，这些应用程序可以与 NFC 标签和其他设备交互，通过基于点击的连接读取和写入数据。此模式还允许设备读取包含网址、联系信息或自动化的标签。
+
+
+- 无线充电模式（Wireless Charging mode）
+此模式将为具有有限电源的小型设备充电，例如手写笔、耳机、健身追踪器、智能手表或其他小型消费产品。
+
+
+- 主机卡仿真（Host Card Emulation）
+通过此实现，位于设备主机中的 HCE 应用程序负责模拟非接触式卡。在此配置中，NFC 控制器将所有收到的非接触式命令转发到设备主机。然后，HCE 应用程序可以使用 NFC API 与非接触式读取器设备进行通信。
+
+
+- 点对点模式（Peer-to-Peer mode）
+两个 NFC设备接触在一起以交换数据。
+- 基于安全元件的卡仿真（Secure Element based Card Emulation）
+这种实现允许与非接触式智能卡解决方案提供的交易具有相同的高安全级别。
+
+
+## NFC如何工作
+
+NFC标签有各种各样的形状和尺寸，最简单的通常是以方形或圆形贴纸的形式制造，这类标签的结构极其简单：由一个细铜线圈和一个微芯片上的小存储空间组成。
+
+![image-20220830180855872.png](https://km.woa.com/asset/ccf951b3781343ed80baadb2ea53db1d?height=574&width=1052)
+
+有源NFC元件可以在无源元件中感应出电流和发送数据。这意味着无源设备不需要自己的电源，当NFC组件进入通信范围时，它们可以由有源NFC组件产生的电磁场提供动力。
+线圈允许标签**通过电磁感应的过程**以无线方式从 NFC 阅读器接收电力。本质上，每当你把有电的NFC读取器靠近标签时，后者就会通电，并将其微芯片内的存储数据传输给设备。
+![image-20220830172736206.png](https://km.woa.com/asset/5d44243ca8874711a5f4e0272178d606?height=844&width=1140)
+
+## NFC标签
+
+NFC 标签是一个通用术语，用于描述所有实现NFC功能的物理标签产品。
+
+### NFC标准/标签类型
+
+这些标准定义了从物理层到通信、数据格式化和应用层的技术工作交互。**这些标准确保了来自不同制造商的NFC 标签、NFC 设备和NFC 软件可以互操作。**大多数标准由 [ISO](https://www.iso.org/home.html) 和 [NFC论坛](https://nfc-forum.org/) 管理。
+
+ISO 定义了几个适用于 NFC芯片和设备的标准：
+
+- [ISO 7816](https://learn.gototags.com/nfc/standards/iso-7816)
+- [ISO 14443](https://learn.gototags.com/nfc/standards/iso-14443)
+- [ISO 15693](https://learn.gototags.com/nfc/standards/iso-15693)
+
+
+NFC 论坛定义了与 NFC 标签、设备和软件相关的各种重要标准：
+
+
+- NDEF
+- NFC 标签类型
+
+
+常见如NFC-A (ISO 14443-3A) / NFC-B (ISO 14443-3B) / NFC-F (JIS 6319-4) / NFC-V (ISO 15693) / ISO-DEP (ISO 14443-4) 等标准。
+
+### NFC架构
+
+最底层是物理层，即您的 CPU 和进行通信的无线电。中间是数据打包和传输层，然后是数据格式层，最后是您的应用程序代码。
+![image-20220830193130378.png](https://km.woa.com/asset/ba84bf3b40f1466e9ef7a39734e5845c?height=850&width=1374)
+
+## NFC 数据交换格式 (NDEF)
+
+NDEF 是NFC 论坛制定的标准化数据格式规范，用于描述如何将一组动作编码到 NFC 标签上或在两个有源 NFC 设备之间进行交换。
+绝大多数支持 NFC 的设备（阅读器、手机、平板电脑……）都支持从 NFC 标签读取 NDEF 消息。
+
+### 格式化
+
+**所有符合 NFC Forum 的 NFC 芯片都必须能够格式化为 NDEF。**
+
+通过将 NFC 芯片格式化为 NDEF，应用程序知道将 NFC 芯片的用户内存解释为 NDEF 消息。
+
+**格式化 NFC 芯片的过程涉及在 OTP（一次性可编程）部分中将特定数据结构写入 NFC 芯片的内存。**
+
+由于此存储位置是 OTP，因此格式化 NFC 标签的过程是永久性操作。一些 NFC 芯片类型，采用 pre-NDEF 格式，因此它们能存储 NDEF 数据；其他 NFC 芯片类型不是 pre-NDEF 格式化但也可用，称为“NDEF Formattable”。（可经过格式化存储NDEF）
+
+#### 格式化示例
+
+合作厂商A提到，通过nfcA 向固定内存写入scheme，同样可以拉起小程序。
+**分析其写入数据如下：**
+![image-20220831103419518.png](https://km.woa.com/asset/4422480ce0a745b698bcfed8f178ad16?height=3556&width=1894)
+
+### NDEF结构
+
+NDEF 是一个以消息为结构的二进制格式，每条消息可以包含多条记录，如图所示。每条记录都由一个header组成，其中包含有关记录的元数据，例如记录类型、长度等，以及payload，其中包含消息的内容。
+
+**一个NDEF记录包含数据的payload和描述如何解释payload的元数据。**每个记录的payload可以是几种不同数据类型中的一种。每个记录的标头包含描述记录及其在消息中的位置的元数据，然后是其类型和 ID。在标头之后是有效负载。
+
+![image-20220830200609305.png](https://km.woa.com/asset/a2d1971bf12741b8b27600c6dd725719?height=338&width=1306)
+
+下图为NDEF记录的的位和字节的全貌：
+
+![image-20220830201123159.png](https://km.woa.com/asset/d1cc3077ab3c4f0981fc723695f9b6f8?height=610&width=1388)
+
+### TNF(Type Name Format)
+
+NDEF记录以TNF开始，TNF标识type字段值的结构；TNF告诉你如何解释type字段；有以下7种可能TNF取值：
+
+
+- 0x00 Empty
+空的没有类型或有效负载的记录。
+
+
+- 0X01 Well-Known
+NFC 论坛 RTD 规范中列出的几种预定义类型之一。
+
+
+- 0X02 MIME media-type
+RFC 2046 中定义的 Internet 媒体类型。
+
+
+- 0X03 Absolute URI
+RFC 3986 中定义的 URI。
+
+
+- 0X04 External
+用户定义的值，基于 NFC 论坛记录类型定义规范中的规则。
+
+
+- 0X05 Unknown
+类型是未知的。类型长度必须为 0。
+
+
+- 0X06 Unchanged
+仅有的用于分块有效负载的中间和终止记录。类型长度必须为 0。
+
+
+- 0X07 Reserved
+预留由 NFC 论坛供将来使用。
+
+
+对于许多应用程序，您可能会将 TNF 01或 TNF 02用于各种 Internet 媒体。您还会经常看到 TNF 04，因为 Android 使用称为AAR(Android Application Record)外部类型来触发应用程序打开。
+
+### 记录类型 Payload Type
+
+有效载荷类型Payload Type，也称为 Record Type，更具体地描述了 payload 的内容。
+
+**NDEF 记录类型定义 (RTD Record Type Definition)** 规范描述了 TNF=Well-Known 的Record Type并设置了创建外部类型的规则。
+
+![image-20220830203402507.png](https://km.woa.com/asset/a499b104eb58450c8a36ff95b8ed8e1a?height=906&width=604)
+
+### NDEF中的URI
+
+NDEF 规范提供了一个带有 URI 标识符代码的 URI 记录类型定义规范，用于更有效地编码 URI。称为UIC(URI identifier codes)。
+
+**为了添加 UIC，您需要将 URI 字符串转换为字节数组并将 UIC 推到它的开头。**
+
+![image-20220830204549849.png](https://km.woa.com/asset/9c5dffb497dd4e9ea0ead109791b6b93?height=1760&width=1350)
+
+![image-20220830210224384.png](https://km.woa.com/asset/724ffcef613948d5bb5e2ba8b35883fe?height=882&width=1512)
+
+### 载荷标识 Payload Identifier
+
+可选。对应payload id
+
+### 载荷 Payload
+
+有效负载是您的内容。它可以是您想要的任何适合字节流的内容。
+
+多数操作 NDEF 库不关心有效负载中的内容，它只是将其传递。你可以加密你的有效载荷，你可以发送纯文本，你可以发送一个二进制 blob，或者任何你能想到的东西。由发送应用程序和接收应用程序来就有效载荷的含义和格式化方式达成一致。
+
+### Record Layout
+
+NDEF 记录的前5 bit是指示如何处理记录的标志以及有关记录在消息中的位置的信息。
+
+**记录头第一个字节中的位标志如下：**
+
+
+- **MB (Message Begin)**
+True when this is the first record in a message.
+
+
+- **ME (Message End)**
+True when this is the last record in a message.
+
+
+- **CF (Chunk Flag)**
+True when this record is chunked.
+
+
+- **SR (Short Record)**
+True if the short record format is used for payload length.
+
+
+- **IL (ID Length is present)**
+True if the ID Length field is present.
+
+
+- **最后三bit**
+8种TNF
+
+
+### 记录头 Record Header
+
+NDEF 记录是可变长度的数据结构。记录头包含读取数据所需的信息。
+
+- TNF：一个 NDEF 记录以 TNF 字节开始，其中包括**位标志**（见上一节Record Layout）。
+
+- Type Length：在 TNF 之后，类型长度是一个单字节字段，以字节为单位指定有效负载类型的长度。类型长度是必需的，但可以为零。
+
+- Payload Length：记录头第一个字节中的 (SR) 位标志决定了有效载荷记录的长度。如果 SR 为真，则有效载荷长度为 1 个字节，否则为 4 个字节（对应Payload最大长度为2^32 - 1）。有效载荷长度是必需的，但可能为零。
+
+- ID Length：如果 (IL) 标志为真，存在 ID 长度字段，确定Payload ID字段长度。
+
+- Payload Type： 是ID Length 之后的可变长度字段（或者如果 IL 标志为false，则在有效负载长度字段Payload Length之后）。根据前面的Type Length字段确定应该读取多少字节。
+
+- Payload ID：位于Payload Type之后。此可变长度字段由 ID Length 字节确定。
+
+![image-20220830201123159.png](https://km.woa.com/asset/92fbad9ab7d64755a73866a139e72570?height=610&width=1388)
+
+## NFC 的应用
+
+主要用于物联网、支付、可穿戴设备、交通卡片、无线充电等方面。
+
+## 微信小程序中使用
+
+### NFC拉起小程序
+
+[NFC 标签打开小程序](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/NFC.html)
+
+[获取拉起小程序nfc URL scheme 码](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generateNFC.html)
+
+[小程序NFC读写](https://developers.weixin.qq.com/miniprogram/dev/api/device/nfc/wx.getNFCAdapter.html)
+
+
+- **注意添加UIC标识(见NDEF中的URI说明)**
+
+
+之前在拉起微信小程序的过程中，发现直接写 url scheme是无效的，前面添加  `0x00`  URI标识！
+
+## 相关资料
+
+[NFC论坛 https://nfc-forum.org/](https://nfc-forum.org/learn/what-nfc-does/)
+
+[书籍《beginning-nfc》](https://www.oreilly.com/library/view/beginning-nfc/9781449324094/)
+
+[GoToTags learn](https://learn.gototags.com/nfc)
