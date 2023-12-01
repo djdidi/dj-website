@@ -1,0 +1,33 @@
+## MQTT 基本概念
+
+### 什么是 MQTT
+
+MQTT（Message Queuing Telemetry Transport）是一种轻量级、基于发布-订阅模式的消息传输协议，适用于资源受限的设备和低带宽、高延迟或不稳定的网络环境。它在物联网应用中广受欢迎，能够实现传感器、执行器和其它设备之间的高效通信。
+
+### MQTT 工作原理
+
+几个基本概念
+
+**mqtt client**
+
+- 一些工具 mqtt.fx、mqttx ...
+- nodejs 服务
+
+**mqtt broker**
+
+- 云服务
+- 开源的 emqx 等
+
+**发布订阅模式**
+
+- 客户端连接到 MQTT Broker，并通过 publish 操作将数据发布到一个特定 topic。
+- MQTT Broker 接收到该消息后会负责将其转发给 subscribe 了相应 topic 的订阅者客户端。
+
+<img src='https://assets.emqx.com/images/a6baf485733448bc9730f47bf1f41135.png?imageMogr2/thumbnail/1520x' width='700' />
+
+
+
+:::note 相关链接
+MQTT 教程 https://www.emqx.com/zh/mqtt-guide
+:::
+
