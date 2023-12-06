@@ -1,0 +1,46 @@
+---
+sidebar_position: 2
+---
+
+## 同源
+
+### 浏览器的同源策略
+
+同源策略是浏览器安全策略之一，它用于限制一个源的文档或者它加载的脚本如何能与另一个源的资源进行交互。
+
+**没有同源策略带来的安全问题？**
+
+- 打开恶意网站通过 js 读取其他网站任何信息(cookie等)
+- iframe 套任何页面钓鱼
+- ...
+
+### 源是什么
+
+- Web 内容的源由用于访问它的 URL 的方案（协议）、主机名（域名）和端口定义。
+- 只有当协议、主机和端口都匹配时，两个对象才具有相同的源。
+
+[源（Origin）](https://developer.mozilla.org/zh-CN/docs/Glossary/Origin)
+
+## 跨源资源共享（CORS）
+
+CORS 是一种基于 HTTP 头的机制，它由一系列 HTTP 标头组成，这些 HTTP 标头决定浏览器是否阻止获取跨源请求的响应。
+
+`Allow-Control-*` 相关 http 头部字段决定。 [CORS 标头](https://developer.mozilla.org/zh-CN/docs/Glossary/CORS)
+
+### 请求场景
+
+- [简单请求](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS#%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82) 如 Get 方法
+
+- [预检(非简单)请求](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS#%E9%A2%84%E6%A3%80%E8%AF%B7%E6%B1%82) 如 PUT 等方法。 OPTIONS 方法 + 实际请求；可以避免跨域请求对服务器的用户数据产生未预期的影响。
+
+## 跨域处理
+
+- JSONP：利用`<script>`标签没有跨域限制，通过标签src属性，发送带有callback参数的GET请求。
+- 通过 CORS
+- 代理服务，如本地devServer。同源策略是浏览器安全机制，和服务端无关。
+
+
+
+
+
+

@@ -1,0 +1,74 @@
+---
+sidebar_position: 1
+---
+
+## 学习必要性
+
+*了解和优化关键渲染路径对于确保重排和重绘可以每秒 60 帧的速度进行，以确保高效的用户交互并避免卡顿是很重要的。 ---MDN*
+
+## 网络请求
+
+网络请求获取资源，计算机网络相关，不在这里展开讲。
+
+## 解析资源
+
+### 解析内容
+
+收到 html 内容后，开始解析 html 内容。
+
+- 当解析器发现非阻塞资源，例如一张图片，浏览器会请求这些资源并且继续解析
+- 遇到文档标签，**构建 DOM**
+- 遇到 css 标签，**构建 CSSOM**
+- 遇到 JS 脚本，进行 JavaScript 编译（抽象语法树 -> 输入编译器 -> 输出字节码）
+
+### 预加载资源
+
+加载资源顺序是文档中出现的顺序决定的，我们可以使用 [preload](https://developer.mozilla.org/zh-CN/docs/Web/html/Attributes/rel/preload) 来手动调整资源的预加载顺序。
+
+### 阻塞问题
+
+<u>等待获取 css 不会阻塞 html 的解析或者下载，但是它确实会阻塞 JavaScript</u>（因为 JavaScript 经常用于查询元素的 css 属性）。
+
+脚本的加载也会阻塞 html 的解析。可以给 script 标签加上 async 或者 defer，跳过等待加载脚本。
+
+- async：脚本加载后，阻塞 html 解析，立即执行脚本，执行完后再解析 html
+- defer：整个 html 解析完成后（DOMContentLoaded 触发之前）执行
+
+**DOMContentLoaded 与 load**
+
+- DOMContentLoaded：html 文档解析，且所有延迟脚本都执行（此时样式/图等可能未加载好）
+- load：所有资源都加载完成
+
+## 渲染页面
+
+1. 样式(style)：将 DOM 和 CSSOM 组合成渲染树，计算样式并与DOM中可见节点匹配。
+2. 布局(layout)：确定渲染树中所有节点的尺寸和位置。
+3. 绘制(paint)：浏览器将在布局阶段计算的每个框转换为屏幕上的实际像素。
+    - 为了平滑渲染，所有占据主线程的事情(计算样式/重绘/回流)需要在 16.67ms 内完成
+    - 浏览器通过元素分层(GPU)，提高绘制性能。(opacity、3D transform、canvas、video...)
+4. 合成(Compositing)：如果分层绘制重叠，需要进行合成。
+
+:::info 相关概念
+**回流(reflow)**：第一次确定每个节点的大小和位置称为布局(layout)，后续的重新计算称为回流(reflow)。
+
+**重绘(repaint)**：重新绘制。
+:::
+
+搞懂渲染流程，回流一定伴随着重绘，布局相关改变会伴随着 reflow。
+
+## 优化手段
+
+- 头部加载 css，尾部加载 js
+- 利用 preload、async 与 defer
+- 合并 DOM 操作
+- img 指定宽高，避免回流
+- 利用分层(GPU)，复杂动画脱离文档流
+- ...
+
+## 相关链接
+
+:::info 相关链接
+[关键渲染路径](https://developer.mozilla.org/zh-CN/docs/Web/Performance/Critical_rendering_path)
+
+[渲染页面：浏览器的工作原理](https://developer.mozilla.org/zh-CN/docs/Web/Performance/How_browsers_work)
+:::
