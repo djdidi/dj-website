@@ -140,9 +140,9 @@ useEffect(() => {
 
 **解决方式**
 
-- count 加入到 deps 中，重置定时器，会影响定时器准确性
+- [重新创建定时器] count 加入到 deps 中，重置定时器，会影响定时器准确性
   + -> 重新产生闭包，count 也是新的值。
-- useRef 存下 countRef；可以封装 useLatest
+- [重新引用值] useRef 存下 countRef；可以封装 useLatest
   + -> 访问同一对象地址
-- 让函数始终是最新的
+- [重新创建函数] 让函数始终是最新的
   + -> 参考 ahooks useMemoizedFn
