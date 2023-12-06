@@ -132,13 +132,17 @@ useEffect(() => {
 
 - 在 fiber 节点的 memorizedState 属性存放一个链表，链表节点和 hook 一一对应，每个 hook 都在各自对应的节点上存取数据。
 - useEffect 此时 deps 的参数为 `[]`，重新执行时会对比新旧两次的 deps，如果变了才会重新执行传入的函数。
-- 在定时器回调函数创建时，闭包中变量 `count` 始终为 `1`，无论 state 如何更新。
+  + **所以这里只设置一次定时器。**
+- 在定时器回调函数创建时，闭包产生，变量 `count` 始终为 `1`。
+  + **无论 state 如何更新，定时器回调中查找 `count` 变量都是访问闭包中的。**
 
-> 具体结合 react hooks 原理和 react 声明周期 一起来看。
+> 具体结合 react hooks 原理和 react 生命周期 一起来看。
 
 **解决方式**
 
 - count 加入到 deps 中，重置定时器，会影响定时器准确性
-- useRef 存下 countRef
-- useRef 存下 latestCallbackRef，useLayoutEffect 重置 latestCallbackRef
-- 参考下 ahooks useTimeout
+  + -> 重新产生闭包，count 也是新的值。
+- useRef 存下 countRef；可以封装 useLatest
+  + -> 访问同一对象地址
+- 让函数始终是最新的
+  + -> 参考 ahooks useMemoizedFn

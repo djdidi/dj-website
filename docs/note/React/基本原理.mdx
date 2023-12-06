@@ -1,0 +1,234 @@
+---
+sidebar_label: 原理
+sidebar_position: 2
+---
+
+# React 基本原理
+
+## 事件原理
+
+### 回顾事件流
+
+**DOM2-事件流（事件传播）**
+
+![DOM2](https://tsejx.github.io/javascript-guidebook/static/event-flow.3ce49e4d.png)
+
+**事件委托（事件代理）**
+
+利用事件冒泡的特性，将事件绑定在祖先元素上，多个子孙级元素的某类型事件处理。
+
+> React 中绑定事件默认在冒泡阶段，可以加 `onXxxCapture` 绑定在捕获阶段。
+
+### 事件合成
+
+React事件合成是React提供的一种事件处理机制，它抽象了浏览器原生事件，提供了一些额外的特性和优化。
+- 解决了兼容性问题
+- 性能优化：事件委托，减少监听器数量；组件卸载时自动销毁
+
+React 的事件不是绑定在元素上的，而是统一绑定在顶部容器上，在 v17 之前是绑定在 document 上的，在 v17 改成了 app 容器上。
+
+**事件插件**
+
+```text
+{
+    onBlur: ['blur'],
+    onClick: ['click'],
+    onClickCapture: ['click'],
+    onChange: ['blur', 'change', 'click', 'focus', 'input', 'keydown', 'keyup'],
+    onMouseEnter: ['mouseout', 'mouseover'],
+    onMouseLeave: ['mouseout', 'mouseover'],
+    ...
+}
+```
+
+### 事件注册
+
+React 上注册的事件会挂载到 `根容器` 上。React 通过维护**事件队列**，模拟出捕获和冒泡，也对事件对象进行了包装(SyntheticEvent)。
+
+**那么我们可以推断以下执行流程：**
+
+1. 根 原生捕获
+2. react 捕获
+3. 原生 捕获
+4. 原生 冒泡
+5. react 冒泡
+6. 根 原生冒泡
+
+
+
+
+
+## 调度 (Scheduler)
+
+### 为什么需要异步调度?
+
+**原因**
+
+- 浏览器是多线程的，其中JS引擎线程和GUI渲染线程是互斥的
+- 如果JS引擎线程一次性执行了一个长时间的同步任务，就可能出现掉帧的情况，影响用户的体验
+
+**解决**
+
+将渲染任务分解为多个较小**的子任务**，且在浏览器**空闲时间**执行更新任务。
+
+### 时间分片
+
+Scheduler 的主要功能是时间分片，每隔一段时间就把主线程还给浏览器，避免长时间占用主线程。
+
+可以基于 `requestIdleCallback`，将 React 更新任务的执行交给浏览器
+
+:::info Tips
+Ideally, the browser needs to complete the rendering stage and deliver a frame within 1/60 seconds.  That is 16.67 milliseconds.  If so, a user sees a smooth animation and doesn't feel lagging.
+> 理想情况下，浏览器需要在1/60秒内完成渲染阶段并交付一个帧。也就是16.67ms。如果是这样，用户就会看到流畅的动画，不会觉得滞后。
+:::
+
+### requestIdleCallback 的缺陷
+
+1. 兼容性问题
+2. requestIdleCallback 只有 20FPS，也就是 50ms 刷新一次，远远低于页面流畅度的要求。
+
+> [规范：为什么是 50ms？](https://w3c.github.io/requestidlecallback/#idle-periods)
+
+![](https://w3c.github.io/requestidlecallback/images/image00.png)
+
+### 如何模拟实现 requestIdleCallback
+
+想要实现requestIdleCallback的处理，需要满足：
+
+1. 如何判断一帧是否有空闲时间？
+2. 如果有了空闲，在一帧中哪里去执行任务？（宏任务和微任务的选择）
+    - 一定是**宏任务**。我们的逻辑是：只需要执行一个任务，执行完让出主线程，请求下一时间片再执行。
+    - 但是页面更新前会将所有微任务执行完，一样会阻塞主线程。
+
+**setTimeout 模拟实现**
+
+`setTimeout` 存在问题：有最小事件间隔阈值，存在浪费（MDN中也提到 0 不是真的 0）。
+
+```javascript title="递归 setTimeout 最小时间阈值问题"
+let time = 0;
+let nowTime = +new Date();
+let timer;
+const poll = function () {
+  timer = setTimeout(() => {
+    const lastTime = nowTime;
+    nowTime = +new Date();
+    // 4ms-5ms 的时间差
+    console.log('递归setTimeout(fn,0)产生时间差：', nowTime - lastTime);
+    poll();
+  }, 0);
+  time++;
+  if (time === 20) clearTimeout(timer);
+};
+poll();
+```
+
+**requestAnimationFrame + MessageChannel 模拟实现**
+
+- requestAnimationFrame 用于计算时间。
+  > 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，时间间隔跟随浏览器的刷新频率。
+- MessageChannel 用于生产一个宏任务，无延迟。
+
+requestAnimationFrame 存在问题：依赖于FPS、后台挂起时会暂停调用。
+
+**react 中实现**
+
+采用了 `5ms` 间隔触发宏任务消息事件来发起任务调度，同时有以上兼容的实现。TODO:具体需要从源码理解下。
+
+## Fiber
+
+### fiber 基础
+
+**什么是 fiber**
+
+fiber(纤维)，诞生于 React16，fiber 在 React 中是最小粒度的执行单元，可以理解为 React 中的虚拟 DOM 。
+
+**什么是调和**
+
+更新 fiber 的过程叫做 Reconciler（调和器）。
+
+**为什么要有 fiber**
+
+1. 为了解决卡顿问题引入了 fiber，每一个 fiber 都可以作为一个执行单元来处理，所以每一个 fiber 可以根据自身的过期时间/优先级(lane)来判断是否还有空间时间执行更新。
+2. 如果没有时间更新，把主动权交给浏览器去渲染，等浏览器空余时间，在通过 scheduler （调度器），再次恢复执行单元上来。
+
+**fiber 作用**
+
+- 作为工作单元与任务分解
+- 增量渲染更新
+- 根据优先级调度
+- 保存状态 --- hooks
+
+**fiber 结构**
+
+- 通过 child return sibling 链接节点、构造 fiber 树
+- 双缓存树，更新时构建另一 fiber 树，通过 alternate 相互链接，用于后续调和阶段
+
+## 调和 (Reconcile)
+
+### render 阶段
+
+经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个 UI 界面。
+
+在 React 得到元素树之后，React 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。
+
+主要过程
+
+- 构建 fiber 树
+- 生成 effectList
+
+### diff 算法
+
+传统（最佳） diff 算法计算出最小的变更的时间复杂度O(n^3)
+
+:::info 为什么是 n^3?
+- m n 节点两颗树，每个节点都和另一个树所有节点 diff，现在是 n^2
+- 再进行树的编辑(插入、替换、删除)需要遍历一次 n^3
+
+这样可以充分利用老的节点，找到真正的差异。
+:::
+
+**react 是如何优化的？**
+
+1. 只对同级比较，跨层级的dom不会进行复用
+2. 不同类型节点生成的dom树不同，此时会直接销毁老节点及子孙节点，并新建节点
+3. 可以通过key来对元素diff的过程提供复用的线索
+
+> 这样只进行同级比较，时间复杂度到 O(n)
+
+
+### commit 阶段
+
+主要就是根据fiber树构建出整个dom树，提交到浏览器渲染。
+
+- 处理之前 effectList，更新 fiber 树，操作 DOM
+- 一些生命周期和 hooks 回调等
+- Before mutation、mutation、layout阶段
+
+
+## hooks 原理
+
+**fiber 上 hooks 数据结构**
+
+fiber 上 memoizedState 存 hooks
+
+```typescript title="hooks type"
+export type Hook = {
+  memoizedState: any, // 当前状态
+  baseState: any, // 基状态
+  baseQueue: Update<any, any> | null, // 基队列
+  queue: UpdateQueue<any, any> | null, // 更新队列
+  next: Hook | null // next指针
+};
+```
+
+**可见 hooks 是如下的链表结构**
+
+![](https://7km.top/static/hook-linkedlist.d52c2c25.png)
+
+**为什么 hooks 要放在顶层**
+
+组件内使用的 hook 会以链表的形式挂在 FiberNode 的 memoizedState 上面。
+
+由于是链表的数据结构，react 在更新时以链表顺序区分 hooks，分支逻辑会破坏 react 处理 hooks。
+
+
