@@ -1,0 +1,48 @@
+---
+sidebar_position: 2
+---
+
+**区别**
+- 观察者模式的通知中心记录了观察者
+- 发布订阅模式的发布/订阅源是分离的，由事件中心调度
+
+```javascript title="javascript"
+class Notifier {
+  constructor() {
+    this.observerList = [];
+  }
+
+  add(obj) {
+    this.observerList.push(obj);
+  }
+
+  remove(obj) {
+    this.observerList = this.observerList.filter(o => o !== obj);
+  }
+
+  notify() {
+    this.observerList.forEach((obj) => obj.update());
+  }
+}
+
+class Observer {
+  constructor(name) {
+    this.name = name;
+  }
+
+  update() {
+    console.log(`${this.name} 收到通知`);
+  }
+}
+
+let notifier = new Notifier();
+
+let observer1 = new Observer('foo');
+let observer2 = new Observer('bar');
+
+notifier.add(observer1);
+notifier.add(observer2);
+
+notifier.remove(observer1);
+notifier.notify();
+```

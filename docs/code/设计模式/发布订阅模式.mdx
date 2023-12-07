@@ -1,0 +1,42 @@
+---
+sidebar_position: 1
+---
+
+## 手写 EventEmitter
+
+```javascript title="javascript"
+class EventEmitter {
+  #events = {};
+
+  constructor() {
+    this.#events = {};
+  }
+
+  on(event, cb) {
+    const cbQueue = this.#events[event];
+    this.#events[event] = [...cbQueue, cb];
+    return this;
+  }
+
+  off(event, cb) {
+    const cbQueue = this.#events[event];
+    this.#events[event] = cbQueue.filter(fn => fn !== cb);
+    return this;
+  }
+
+  emit(event, ...params) {
+    const cbQueue = this.#events[event];
+    cbQueue.forEach(fn => fn(...params));
+    return this;
+  }
+
+  once(event, cb) {
+    const onceFn = (...args) => {
+      cb();
+      this.off(event, onceFn);
+    };
+    this.on(event, onceFn);
+    return this;
+  }
+}
+```
